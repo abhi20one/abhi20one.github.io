@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="user.css"/>
+</head>
+<body>
+    
+    <section class="sec1">  
+        <div class="back">
+            <a href="../../index.html"><img src="symbols/arrow.png" /></a>
+        </div>
+    </section>
+    
+    <section class="sec2">
+        <div class="full-image" id="fullimgbox">
+            <img src="files/img1.png" id="fullimg">
+        </div>  
+    </section>
+
+    <section class="sec3">  
+        <div class="image-gallery">
+            <img src="files/img1.png" onclick="openfullimg(this.src)">
+            <img src="files/img2.png" onclick="openfullimg(this.src)">
+            <img src="files/img3.png" onclick="openfullimg(this.src)">
+            <img src="files/img4.png" onclick="openfullimg(this.src)">
+            <img src="files/img5.png" onclick="openfullimg(this.src)">
+            <img src="files/img6.png" onclick="openfullimg(this.src)">
+            <img src="files/img7.png" onclick="openfullimg(this.src)">
+            <img src="files/img8.png" onclick="openfullimg(this.src)">
+            <img src="files/img9.png" onclick="openfullimg(this.src)">
+        </div>
+    </section>
+
+
+    <script>
+        var fullimgbox = document.getElementById("fullimgbox");
+        var fullimg = document.getElementById("fullimg");
+
+        function openfullimg(pic){
+            fullimgbox.style.display = "flex";
+            fullimg.src = pic;
+        }
+    </script>
+
+</body>
+</html>
