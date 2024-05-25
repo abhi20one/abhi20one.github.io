@@ -41,7 +41,7 @@
         button.touch-active{
             background-color: rgb(153, 153, 153);
         }
-        
+
       
         
         .sec2{
@@ -60,7 +60,7 @@
         .temp{
             float: right;
             width: 40%;
-            height:98vh;
+            height:1vh;
             z-index: 2;
             background-color: rgb(34, 34, 34);
         }
@@ -152,17 +152,20 @@
             <div class="btngrp">
                 <input type="file" class="inp" style="display:none" multiple onchange="getImageData(event)">
 
-                <button onclick="selectImage()">Select Images</button>
-                <button onclick="uploadImages()">Upload Images</button>
-                <button onclick="cancelSelection()">Clear</button>
-                <button onclick="deleteSelectedImage()">Delete</button>
+                <button class="b1" onclick="selectImage()">Select Images</button>
+                <button class="b2" onclick="uploadImages()">Upload Images</button>
+                <button class="b3" onclick="cancelSelection()">Clear</button>
+                <button class="b4" onclick="deleteSelectedImage()">Delete</button>
+
+                <div class="filedata" style="display:none"></div>
+                <div class="progress"></div>
+                <div class="loading"></div>
+                
             </div>
 
             
           
-            <div class="filedata" style="display:none"></div>
-            <div class="progress"></div>
-            <div class="loading"></div>
+            
             <div class="gallery" id="imageGallery"></div>
             <div class="resizer"></div>
                 
@@ -193,14 +196,15 @@
     
     
     document.querySelectorAll('button').forEach(button => {
-        button.addEventListener('mouseenter', function() {
-            console.log('Mouse entered');
-            this.classList.add('touch-active');
+        button.addEventListener("mouseover", event => {
+            //console.log('Mouse started');
+            //event.target.classList.add('touch-active');
         });
-    
-        button.addEventListener('mouseleave', function() {
-            console.log('Mouse left');
-            this.classList.remove('touch-active');
+
+
+        button.addEventListener('mouseout', function() {
+            //console.log('Mouse left');
+            //this.classList.remove('touch-active');
         });
     
         button.addEventListener('touchstart', function(event) {
