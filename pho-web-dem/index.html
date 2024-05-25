@@ -15,7 +15,7 @@
         *{
             margin: 0px;
             padding: 0px;
-        
+            user-select: none; 
         }
   
 
@@ -24,20 +24,30 @@
             
         }
 
+
+
         button{
-            font-family: 'Courier New', monospace;
-            font-size: 1em;
+            font-size: medium;
             border-radius: 2px;
             border: 1px solid rgb(0, 0, 0);
+            height:40px;
+            width:110px;
+            transition: background-color 0.3s ease; 
+            user-select: none; 
+        }
+
+        button.touch-active {
+            background-color: rgb(195, 195, 195);
         }
         
         .sec2{
             float: right;
-            width: 40%;
-            height:auto;
+            width: 31%;
+            height:100vh;
             z-index: 2;
             background-color: rgb(34, 34, 34);
-            color: white;
+            color: rgb(201, 201, 201);
+            overflow-y: auto; 
         }
         .temp{
             float: right;
@@ -49,7 +59,7 @@
         .sec1{
             position: fixed;
             float: right;
-            width: 60%;
+            width: 69%;
             height:100vh;
             background-color: rgb(0, 0, 0);
             z-index: -1;
@@ -79,6 +89,7 @@
             
         }
 
+
         .gallery {
             display: flex;
             flex-wrap: wrap;
@@ -95,6 +106,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(20%, 1fr));
             grid-gap: 5px;
+            
         } 
 
         
@@ -123,19 +135,24 @@
 
     <section class="sec2"> 
         
-        <input type="file" class="inp" style="display:none" multiple onchange="getImageData(event)">
         
-        <button onclick="selectImage()">Select Image</button>       
-        <button onclick="uploadImages()">Upload Image</button>
-        <button onclick="cancelSelection()">Clear</button>
-        <button onclick="deleteSelectedImage()">Delete</button>
+            <input type="file" class="inp" style="display:none" multiple onchange="getImageData(event)">
 
-        <div class="filedata" style="display:none"></div>
-        <div class="progress"></div>
-        <div class="loading"></div>
-        <div class="gallery" id="imageGallery"></div>
-        <div class="resizer"></div>
-        <div class="temp"></div>
+                <button onclick="selectImage()">Select</button>
+                <button onclick="uploadImages()">Upload</button>
+                <button onclick="cancelSelection()">Clear</button>
+                <button onclick="deleteSelectedImage()">Delete</button>
+
+            
+          
+            <div class="filedata" style="display:none"></div>
+            <div class="progress"></div>
+            <div class="loading"></div>
+            <div class="gallery" id="imageGallery"></div>
+            <div class="resizer"></div>
+                
+            <div class="temp"></div>
+    
     </section>
     
     <section class="sec1"> 
@@ -153,102 +170,114 @@
 
 <script>
     
+    document.querySelectorAll('button').forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            this.classList.add('touch-active');
+        });
+    
+        button.addEventListener('mouseleave', function() {
+            this.classList.remove('touch-active');
+        });
+    
+        button.addEventListener('touchstart', function(event) {
+            this.classList.add('touch-active');
+            event.preventDefault(); // Prevent default touch behavior
+        });
+    
+        button.addEventListener('touchend', function(event) {
+            this.classList.remove('touch-active');
+            event.preventDefault(); // Prevent default touch behavior
+        });
+    });
 
 
 
-
+    
     const s2 = document.querySelector(".sec2");
     const s1 = document.querySelector(".sec1");
     let isResizing = false;
     const resizers = document.querySelectorAll(".resizer");
     let currentResizer;
-    
+
     function getMinWidth1() {
-        return window.innerWidth * 0.2;
-      }
-      
-      function getMaxWidth1() {
-        return 1900; //        return window.innerWidth * 0.8;
-      }
-      
-      function getMinWidth2() {
-        return 110; // 20% of the screen width for .sec1
-      }
-      
-      function getMaxWidth2() {
-        return window.innerWidth * 0.8;// 80% of the screen width for .sec2
-      }
-    
-    for (let resizer of resizers) {
-      resizer.addEventListener("mousedown", startResize);
-      resizer.addEventListener("touchstart", startResize, { passive: false });
-    
-      function startResize(e) {
-        e.preventDefault();
-        currentResizer = e.target;
-        currentResizer.classList.add('active'); // Add active class on touch
-        isResizing = true;
-        let prevX = (e.type === "mousedown") ? e.clientX : e.touches[0].clientX;
-    
-        function moveResize(e) {
-          if (!isResizing) return;
-          const currentX = (e.type === "mousemove") ? e.clientX : e.touches[0].clientX;
-    
-          const minWidth1 = getMinWidth1();
-          const maxWidth1 = getMaxWidth1();
-          const minWidth2 = getMinWidth2();
-          const maxWidth2 = getMaxWidth2();
-    
-          const rectel2 = s2.getBoundingClientRect();
-          const rectel1 = s1.getBoundingClientRect();
-    
-          let newWidth2 = rectel2.width + (prevX - currentX);
-          let newWidth1 = rectel1.width - (prevX - currentX);
-    
-          // Apply the boundary limits for .sec2
-          if (newWidth2 < minWidth2) {
-            newWidth2 = minWidth2;
-            newWidth1 = rectel1.width + rectel2.width - minWidth2;
-          } else if (newWidth2 > maxWidth2) {
-            newWidth2 = maxWidth2;
-            newWidth1 = rectel1.width + rectel2.width - maxWidth2;
-          }
-    
-          // Apply the boundary limits for .sec1
-          if (newWidth1 < minWidth1) {
-            newWidth1 = minWidth1;
-            newWidth2 = rectel1.width + rectel2.width - minWidth1;
-          } else if (newWidth1 > maxWidth1) {
-            newWidth1 = maxWidth1;
-            newWidth2 = rectel1.width + rectel2.width - maxWidth1;
-          }
-    
-          s2.style.width = newWidth2 + "px";
-          s1.style.width = newWidth1 + "px";
-    
-          prevX = currentX;
-        }
-    
-        function stopResize() {
-          window.removeEventListener("mousemove", moveResize);
-          window.removeEventListener("mouseup", stopResize);
-          window.removeEventListener("touchmove", moveResize);
-          window.removeEventListener("touchend", stopResize);
-          currentResizer.classList.remove('active'); // Remove active class on touch end
-          isResizing = false;
-        }
-    
-        window.addEventListener("mousemove", moveResize);
-        window.addEventListener("mouseup", stopResize);
-        window.addEventListener("touchmove", moveResize, { passive: false });
-        window.addEventListener("touchend", stopResize);
-      }
+        return 110;
     }
-    
 
+    function getMaxWidth1() {
+        return 1900; // Maximum width for .sec1
+    }
 
+    function getMinWidth2() {
+        return 130; // Minimum width for .sec2
+    }
 
+    function getMaxWidth2() {
+        return window.innerWidth * 0.8; // Maximum width for .sec2
+    }
 
+    for (let resizer of resizers) {
+        resizer.addEventListener("mousedown", startResize);
+        resizer.addEventListener("touchstart", startResize, {passive: false});
+
+        function startResize(e) {
+            e.preventDefault();
+            currentResizer = e.target;
+            currentResizer.classList.add('active'); // Add active class on touch
+            isResizing = true;
+            let prevX = (e.type === "mousedown") ? e.clientX : e.touches[0].clientX;
+
+            function moveResize(e) {
+                if (!isResizing) return;
+                const currentX = (e.type === "mousemove") ? e.clientX : e.touches[0].clientX;
+
+                const minWidth1 = getMinWidth1();
+                const maxWidth1 = getMaxWidth1();
+                const minWidth2 = getMinWidth2();
+                const maxWidth2 = getMaxWidth2();
+
+                const rectel2 = s2.getBoundingClientRect();
+                const rectel1 = s1.getBoundingClientRect();
+
+                let newWidth2 = rectel2.width + (prevX - currentX);
+                let newWidth1 = rectel1.width - (prevX - currentX);
+
+                if (newWidth2 < minWidth2) {
+                    newWidth2 = minWidth2;
+                    newWidth1 = rectel1.width + rectel2.width - minWidth2;
+                } else if (newWidth2 > maxWidth2) {
+                    newWidth2 = maxWidth2;
+                    newWidth1 = rectel1.width + rectel2.width - maxWidth2;
+                }
+
+                if (newWidth1 < minWidth1) {
+                    newWidth1 = minWidth1;
+                    newWidth2 = rectel1.width + rectel2.width - minWidth1;
+                } else if (newWidth1 > maxWidth1) {
+                    newWidth1 = maxWidth1;
+                    newWidth2 = rectel1.width + rectel2.width - maxWidth1;
+                }
+
+                s2.style.width = newWidth2 + "px";
+                s1.style.width = newWidth1 + "px";
+
+                prevX = currentX;
+            }
+
+            function stopResize() {
+                window.removeEventListener("mousemove", moveResize);
+                window.removeEventListener("mouseup", stopResize);
+                window.removeEventListener("touchmove", moveResize);
+                window.removeEventListener("touchend", stopResize);
+                currentResizer.classList.remove('active');
+                isResizing = false;
+            }
+
+            window.addEventListener("mousemove", moveResize);
+            window.addEventListener("mouseup", stopResize);
+            window.addEventListener("touchmove", moveResize, {passive: false});
+            window.addEventListener("touchend", stopResize);
+        }
+    }
 
 
 
@@ -380,7 +409,7 @@
     const defaultImage = (images, index) => {
 
         if (images.length == 0) {
-            hideImage();  // Call a function to hide the currently displayed image
+            noImage();  // Call a function to hide the currently displayed image
             return;
         }
  
@@ -459,7 +488,7 @@
     };
 
     const noImage = () => {
-        modalImg.src = 'https://upload.wikimedia.org/wikipedia/commons/5/59/Empty.png';
+        modalImg.src = 'https://cdn.iconscout.com/icon/premium/png-512-thumb/empty-folder-1519007-1284948.png?f=webp&w=256';
     };
     
     
@@ -469,9 +498,9 @@
 
     const deleteSelectedImage = () => {
 
-        console.log("del",currentindex);
+        //console.log("del",currentindex);
 
-        console.error(currentImageRef);
+     
         if (!currentImageRef) {
             alert("No image selected to delete.");
             return;
@@ -485,6 +514,18 @@
             console.error("Error deleting image: ", error);
         });
     };
+   
+    
+
+
+
+
+
+
+
+
+
+
     
     const displaynextImage = () => {
         $('#imageGallery').empty();
