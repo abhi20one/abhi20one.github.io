@@ -33,7 +33,7 @@
         
         .sec2{
             float: right;
-            width: 30%;
+            width: 40%;
             height:auto;
             z-index: 2;
             background-color: rgb(34, 34, 34);
@@ -49,7 +49,7 @@
         .sec1{
             position: fixed;
             float: right;
-            width: 70%;
+            width: 60%;
             height:100vh;
             background-color: rgb(0, 0, 0);
             z-index: -1;
@@ -113,6 +113,7 @@
         @media screen and (max-width: 768px) {
         .sec1 {
         z-index: -1; /* Move sec1 further behind sec2 on smaller screens */
+        min-width: 100px;
         }
     }
         
@@ -156,97 +157,94 @@
 
 
 
-    
     const s2 = document.querySelector(".sec2");
-const s1 = document.querySelector(".sec1");
-let isResizing = false;
-const resizers = document.querySelectorAll(".resizer");
-let currentResizer;
-
-function getMinWidth1() {
-  return window.innerWidth * 0.2; // 20% of the screen width for .sec1
-}
-
-function getMaxWidth1() {
-  return window.innerWidth * 0.9; // 90% of the screen width for .sec1
-}
-
-function getMinWidth2() {
-  return window.innerWidth * 0.1; // 10% of the screen width for .sec2
-}
-
-function getMaxWidth2() {
-  return window.innerWidth * 0.8; // 80% of the screen width for .sec2
-}
-
-for (let resizer of resizers) {
-  resizer.addEventListener("mousedown", startResize);
-  resizer.addEventListener("touchstart", startResize, { passive: false });
-
-  function startResize(e) {
-    e.preventDefault();
-    currentResizer = e.target;
-    currentResizer.classList.add('active'); // Add active class on touch
-    isResizing = true;
-    let prevX = (e.type === "mousedown") ? e.clientX : e.touches[0].clientX;
-
-    function moveResize(e) {
-      if (!isResizing) return;
-      const currentX = (e.type === "mousemove") ? e.clientX : e.touches[0].clientX;
-
-      const minWidth1 = getMinWidth1();
-      const maxWidth1 = getMaxWidth1();
-      const minWidth2 = getMinWidth2();
-      const maxWidth2 = getMaxWidth2();
-
-      const rectel2 = s2.getBoundingClientRect();
-      const rectel1 = s1.getBoundingClientRect();
-
-      let newWidth2 = rectel2.width + (prevX - currentX);
-      let newWidth1 = rectel1.width - (prevX - currentX);
-
-      // Apply the boundary limits for .sec2
-      if (newWidth2 < minWidth2) {
-        newWidth2 = minWidth2;
-        newWidth1 = rectel1.width + rectel2.width - minWidth2;
-      } else if (newWidth2 > maxWidth2) {
-        newWidth2 = maxWidth2;
-        newWidth1 = rectel1.width + rectel2.width - maxWidth2;
+    const s1 = document.querySelector(".sec1");
+    let isResizing = false;
+    const resizers = document.querySelectorAll(".resizer");
+    let currentResizer;
+    
+    function getMinWidth1() {
+        return window.innerWidth * 0.2;
       }
-
-      // Apply the boundary limits for .sec1
-      if (newWidth1 < minWidth1) {
-        newWidth1 = minWidth1;
-        newWidth2 = rectel1.width + rectel2.width - minWidth1;
-      } else if (newWidth1 > maxWidth1) {
-        newWidth1 = maxWidth1;
-        newWidth2 = rectel1.width + rectel2.width - maxWidth1;
+      
+      function getMaxWidth1() {
+        return 1900; //        return window.innerWidth * 0.8;
       }
-
-      s2.style.width = newWidth2 + "px";
-      s1.style.width = newWidth1 + "px";
-
-      prevX = currentX;
+      
+      function getMinWidth2() {
+        return 110; // 20% of the screen width for .sec1
+      }
+      
+      function getMaxWidth2() {
+        return window.innerWidth * 0.8;// 80% of the screen width for .sec2
+      }
+    
+    for (let resizer of resizers) {
+      resizer.addEventListener("mousedown", startResize);
+      resizer.addEventListener("touchstart", startResize, { passive: false });
+    
+      function startResize(e) {
+        e.preventDefault();
+        currentResizer = e.target;
+        currentResizer.classList.add('active'); // Add active class on touch
+        isResizing = true;
+        let prevX = (e.type === "mousedown") ? e.clientX : e.touches[0].clientX;
+    
+        function moveResize(e) {
+          if (!isResizing) return;
+          const currentX = (e.type === "mousemove") ? e.clientX : e.touches[0].clientX;
+    
+          const minWidth1 = getMinWidth1();
+          const maxWidth1 = getMaxWidth1();
+          const minWidth2 = getMinWidth2();
+          const maxWidth2 = getMaxWidth2();
+    
+          const rectel2 = s2.getBoundingClientRect();
+          const rectel1 = s1.getBoundingClientRect();
+    
+          let newWidth2 = rectel2.width + (prevX - currentX);
+          let newWidth1 = rectel1.width - (prevX - currentX);
+    
+          // Apply the boundary limits for .sec2
+          if (newWidth2 < minWidth2) {
+            newWidth2 = minWidth2;
+            newWidth1 = rectel1.width + rectel2.width - minWidth2;
+          } else if (newWidth2 > maxWidth2) {
+            newWidth2 = maxWidth2;
+            newWidth1 = rectel1.width + rectel2.width - maxWidth2;
+          }
+    
+          // Apply the boundary limits for .sec1
+          if (newWidth1 < minWidth1) {
+            newWidth1 = minWidth1;
+            newWidth2 = rectel1.width + rectel2.width - minWidth1;
+          } else if (newWidth1 > maxWidth1) {
+            newWidth1 = maxWidth1;
+            newWidth2 = rectel1.width + rectel2.width - maxWidth1;
+          }
+    
+          s2.style.width = newWidth2 + "px";
+          s1.style.width = newWidth1 + "px";
+    
+          prevX = currentX;
+        }
+    
+        function stopResize() {
+          window.removeEventListener("mousemove", moveResize);
+          window.removeEventListener("mouseup", stopResize);
+          window.removeEventListener("touchmove", moveResize);
+          window.removeEventListener("touchend", stopResize);
+          currentResizer.classList.remove('active'); // Remove active class on touch end
+          isResizing = false;
+        }
+    
+        window.addEventListener("mousemove", moveResize);
+        window.addEventListener("mouseup", stopResize);
+        window.addEventListener("touchmove", moveResize, { passive: false });
+        window.addEventListener("touchend", stopResize);
+      }
     }
-
-    function stopResize() {
-      window.removeEventListener("mousemove", moveResize);
-      window.removeEventListener("mouseup", stopResize);
-      window.removeEventListener("touchmove", moveResize);
-      window.removeEventListener("touchend", stopResize);
-      currentResizer.classList.remove('active'); // Remove active class on touch end
-      isResizing = false;
-    }
-
-    window.addEventListener("mousemove", moveResize);
-    window.addEventListener("mouseup", stopResize);
-    window.addEventListener("touchmove", moveResize, { passive: false });
-    window.addEventListener("touchend", stopResize);
-  }
-}
-
-
-
+    
 
 
 
