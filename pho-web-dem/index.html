@@ -75,21 +75,42 @@
         }
 
         .resizer {
-            margin-left: 5px;
+            margin-left: 0px;
             position: fixed;
-            top: 40vh;
-            height: 100px;
-            width: 10px;
-            border-radius: 20px;
-            background-color: rgba(106, 106, 106, 0.5);
-            z-index: 10;
+            top: 0vh;
+            height: 100vh;
+            width: 20px;
+            border-radius: 0px;
+            background-color: rgb(34, 34, 34,0.5);
+            z-index: 20;
             cursor: col-resize;
             transition: background-color 0.3s ease; /* Smooth transition */
           }
           .resizer:hover, .resizer.active {
-            background-color: rgba(106, 106, 106, 0.9); /* Lighter color on hover and touch */
+            background-color: rgba(106, 106, 106, 0); /* Lighter color on hover and touch */
         }
-        
+        .smallbar {
+            margin-left: 5.5px;
+            position: fixed;
+            top: 40vh;
+            height: 100px;
+            width: 10px;
+            border-radius: 5px;
+            background-color: rgba(106, 106, 106, 0.5);
+            z-index: 10;
+            cursor: col-resize;
+          }
+        .longbar {
+            position: fixed;
+            top: 0vh;
+            height: 100vh;
+            width: 20px;
+            border-radius: 0px;
+            background-color: rgb(34, 34, 34,1);
+            z-index: 5;
+          }
+     
+
         .heading{
             font-family: Copperplate, Papyrus, fantasy;
             font-size: 1em;
@@ -168,6 +189,9 @@
             
             <div class="gallery" id="imageGallery"></div>
             <div class="resizer"></div>
+            <div class="smallbar"></div>
+            <div class="longbar"></div>
+            
                 
             <div class="temp"></div>
     
@@ -528,11 +552,16 @@
         let startX = null;
         let endX = null;
 
-        document.addEventListener('touchstart', (event) => {
+        let swipeStartTime = null;
+        const SWIPE_TIMEOUT = 1500; 
+        const sec1Element = document.querySelector('.sec1');
+
+        sec1Element.addEventListener('touchstart', (event) => {
             startX = event.touches[0].clientX;
+            swipeStartTime = new Date().getTime();
         });
 
-        document.addEventListener('touchmove', (event) => {
+        sec1Element.addEventListener('touchmove', (event) => {
             endX = event.touches[0].clientX;
         });
 
@@ -551,25 +580,30 @@
             }
         });
 
-        document.addEventListener('touchend', () => {
+        sec1Element.addEventListener('touchend', () => {
             if (startX && endX) {
+                let swipeDuration = new Date().getTime() - swipeStartTime;
                 let diff = startX - endX;
-                if (diff > 50) {
-                // Swipe right, display the next image
-                    console.log("next");
-                    defaultImage(images, ++currentindex);
-                } else if (diff < -50) {
-                // Swipe left, display the previous image
-                    console.log("previous");
-                    defaultImage(images, --currentindex);
+                if (swipeDuration < SWIPE_TIMEOUT) {
+                    if (diff > 50) {
+                        // Swipe right, display the next image
+                        console.log("next");
+                        defaultImage(images, ++currentindex);
+                    } else if (diff < -50) {
+                        // Swipe left, display the previous image
+                        console.log("previous");
+                        defaultImage(images, --currentindex);
+                    }
+                } else {
+                    console.log("Swipe ignored due to timeout");
                 }
                 startX = null;
                 endX = null;
+                swipeStartTime = null;
             }
         });
+
     };
-
-
 
 
 
