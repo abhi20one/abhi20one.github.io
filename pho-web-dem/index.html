@@ -130,68 +130,112 @@
 <script>
     
     const s2 = document.querySelector(".sec2");
-    const s1 = document.querySelector(".sec1");
-    let isResizing = false;
-    const resizers = document.querySelectorAll(".resizer");
-    let currentResizer;   
-    function getMinWidth1() {
-      return window.innerWidth * 0.2; // 20% of the screen width for .sec1
-    }   
-    function getMaxWidth1() {
-      return window.innerWidth * 0.9; // 80% of the screen width for .sec1
-    }   
-    function getMinWidth2() {
-      return window.innerWidth * 0.1; // 10% of the screen width for .sec2
-    } 
-    function getMaxWidth2() {
-      return window.innerWidth * 0.8; // 90% of the screen width for .sec2
-    }   
-    for (let resizer of resizers) {
-      resizer.addEventListener("mousedown", mousedown);   
-      function mousedown(e) {
-        currentResizer = e.target;
-        isResizing = true;
-        let prevX = e.clientX;   
-        window.addEventListener("mousemove", mousemove);
-        window.addEventListener("mouseup", mouseup); 
-        function mousemove(e) {
-          if (!isResizing) return; 
-          const minWidth1 = getMinWidth1();
-          const maxWidth1 = getMaxWidth1();
-          const minWidth2 = getMinWidth2();
-          const maxWidth2 = getMaxWidth2();   
-          const rectel2 = s2.getBoundingClientRect();
-          const rectel1 = s1.getBoundingClientRect();   
-          let newWidth2 = rectel2.width + (prevX - e.clientX);
-          let newWidth1 = rectel1.width - (prevX - e.clientX);   
-          // Apply the boundary limits for .sec2
-          if (newWidth2 < minWidth2) {
-            newWidth2 = minWidth2;
-            newWidth1 = rectel1.width + rectel2.width - minWidth2;
-          } else if (newWidth2 > maxWidth2) {
-            newWidth2 = maxWidth2;
-            newWidth1 = rectel1.width + rectel2.width - maxWidth2;
-          }  
-          // Apply the boundary limits for .sec1
-          if (newWidth1 < minWidth1) {
-            newWidth1 = minWidth1;
-            newWidth2 = rectel1.width + rectel2.width - minWidth1;
-          } else if (newWidth1 > maxWidth1) {
-            newWidth1 = maxWidth1;
-            newWidth2 = rectel1.width + rectel2.width - maxWidth1;
-          }   
-          s2.style.width = newWidth2 + "px";
-          s1.style.width = newWidth1 + "px";   
-          prevX = e.clientX;
-        }  
-        function mouseup() {
-          window.removeEventListener("mousemove", mousemove);
-          window.removeEventListener("mouseup", mouseup);
-          isResizing = false;
-        }
-      }
+const s1 = document.querySelector(".sec1");
+let isResizing = false;
+const resizers = document.querySelectorAll(".resizer");
+let currentResizer;
+
+function getMinWidth1() {
+  return window.innerWidth * 0.2; // 20% of the screen width for .sec1
+}
+
+function getMaxWidth1() {
+  return window.innerWidth * 0.9; // 90% of the screen width for .sec1
+}
+
+function getMinWidth2() {
+  return window.innerWidth * 0.1; // 10% of the screen width for .sec2
+}
+
+function getMaxWidth2() {
+  return window.innerWidth * 0.8; // 80% of the screen width for .sec2
+}
+
+for (let resizer of resizers) {
+  resizer.addEventListener("mousedown", mousedown);
+  resizer.addEventListener("touchstart", touchstart);
+
+  function mousedown(e) {
+    startResizing(e.clientX);
+    window.addEventListener("mousemove", mousemove);
+    window.addEventListener("mouseup", mouseup);
+  }
+
+  function touchstart(e) {
+    startResizing(e.touches[0].clientX);
+    window.addEventListener("touchmove", touchmove);
+    window.addEventListener("touchend", touchend);
+  }
+
+  function startResizing(startX) {
+    currentResizer = event.target;
+    isResizing = true;
+    let prevX = startX;
+
+    function mousemove(e) {
+      resize(e.clientX);
     }
-    
+
+    function touchmove(e) {
+      resize(e.touches[0].clientX);
+    }
+
+    function resize(currentX) {
+      if (!isResizing) return;
+
+      const minWidth1 = getMinWidth1();
+      const maxWidth1 = getMaxWidth1();
+      const minWidth2 = getMinWidth2();
+      const maxWidth2 = getMaxWidth2();
+
+      const rectel2 = s2.getBoundingClientRect();
+      const rectel1 = s1.getBoundingClientRect();
+
+      let newWidth2 = rectel2.width + (prevX - currentX);
+      let newWidth1 = rectel1.width - (prevX - currentX);
+
+      // Apply the boundary limits for .sec2
+      if (newWidth2 < minWidth2) {
+        newWidth2 = minWidth2;
+        newWidth1 = rectel1.width + rectel2.width - minWidth2;
+      } else if (newWidth2 > maxWidth2) {
+        newWidth2 = maxWidth2;
+        newWidth1 = rectel1.width + rectel2.width - maxWidth2;
+      }
+
+      // Apply the boundary limits for .sec1
+      if (newWidth1 < minWidth1) {
+        newWidth1 = minWidth1;
+        newWidth2 = rectel1.width + rectel2.width - minWidth1;
+      } else if (newWidth1 > maxWidth1) {
+        newWidth1 = maxWidth1;
+        newWidth2 = rectel1.width + rectel2.width - maxWidth1;
+      }
+
+      s2.style.width = newWidth2 + "px";
+      s1.style.width = newWidth1 + "px";
+
+      prevX = currentX;
+    }
+
+    function mouseup() {
+      stopResizing();
+      window.removeEventListener("mousemove", mousemove);
+      window.removeEventListener("mouseup", mouseup);
+    }
+
+    function touchend() {
+      stopResizing();
+      window.removeEventListener("touchmove", touchmove);
+      window.removeEventListener("touchend", touchend);
+    }
+
+    function stopResizing() {
+      isResizing = false;
+    }
+  }
+}
+
 
 
 
