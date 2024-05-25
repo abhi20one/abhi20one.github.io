@@ -20,7 +20,7 @@
   
 
         body {
-            background-color: rgb(34, 34, 34);
+            background-color: rgb(0, 0, 0);
             
         }
 
@@ -34,7 +34,17 @@
         .sec2{
             float: right;
             width: 30%;
-            height:100vh;
+            height:auto;
+            z-index: 2;
+            background-color: rgb(34, 34, 34);
+            color: white;
+        }
+        .temp{
+            float: right;
+            width: 30%;
+            height:98vh;
+            z-index: 2;
+            background-color: rgb(34, 34, 34);
         }
         .sec1{
             position: fixed;
@@ -42,6 +52,8 @@
             width: 70%;
             height:100vh;
             background-color: rgb(0, 0, 0);
+            z-index: -1;
+       
         }
 
         .resizer {
@@ -51,19 +63,20 @@
             width: 10px;
             border-radius: 20px;
             background-color: rgba(106, 106, 106, 0.5);
-            z-index: 11;
+            z-index: 10;
             cursor: col-resize;
             transition: background-color 0.3s ease; /* Smooth transition */
           }
-          .resizer:hover {
-            background-color: rgba(106, 106, 106,0.9); /* Lighter color on hover */
-          }
+          .resizer:hover, .resizer.active {
+            background-color: rgba(106, 106, 106, 0.9); /* Lighter color on hover and touch */
+        }
         
         .heading{
             font-family: Copperplate, Papyrus, fantasy;
             font-size: 1em;
             text-align: center;
             color: rgb(255, 255, 255);
+            
         }
 
         .gallery {
@@ -95,12 +108,20 @@
         .modal img {
             object-fit: scale-down;
         }
+
+        /* Media query for smaller screens, e.g., phones */
+        @media screen and (max-width: 768px) {
+        .sec1 {
+        z-index: -1; /* Move sec1 further behind sec2 on smaller screens */
+        }
+    }
         
     </style>
 </head>
 <body>
 
     <section class="sec2"> 
+        
         <input type="file" class="inp" style="display:none" multiple onchange="getImageData(event)">
         
         <button onclick="selectImage()">Select Image</button>       
@@ -113,6 +134,7 @@
         <div class="loading"></div>
         <div class="gallery" id="imageGallery"></div>
         <div class="resizer"></div>
+        <div class="temp"></div>
     </section>
     
     <section class="sec1"> 
@@ -125,109 +147,103 @@
             <div class="firimg" id="firstImg"></div>
         </div>
         
+        
     </section>
 
 <script>
-    <script>
-        const s2 = document.querySelector(".sec2");
-        const s1 = document.querySelector(".sec1");
-        const resizer = document.querySelector(".resizer");
-        let isResizing = false;
     
-        function getMinWidth1() {
-          return window.innerWidth * 0.2; // 20% of the screen width for .sec1
-        }
-    
-        function getMaxWidth1() {
-          return window.innerWidth * 0.8; // 80% of the screen width for .sec1
-        }
-    
-        function getMinWidth2() {
-          return window.innerWidth * 0.1; // 10% of the screen width for .sec2
-        }
-    
-        function getMaxWidth2() {
-          return window.innerWidth * 0.9; // 90% of the screen width for .sec2
-        }
-    
-        function startResizing(startX) {
-          isResizing = true;
-          let prevX = startX;
-    
-          function resize(currentX) {
-            if (!isResizing) return;
-    
-            const minWidth1 = getMinWidth1();
-            const maxWidth1 = getMaxWidth1();
-            const minWidth2 = getMinWidth2();
-            const maxWidth2 = getMaxWidth2();
-    
-            const rectel2 = s2.getBoundingClientRect();
-            const rectel1 = s1.getBoundingClientRect();
-    
-            let newWidth2 = rectel2.width + (prevX - currentX);
-            let newWidth1 = rectel1.width - (prevX - currentX);
-    
-            // Apply the boundary limits for .sec2
-            if (newWidth2 < minWidth2) {
-              newWidth2 = minWidth2;
-              newWidth1 = rectel1.width + rectel2.width - minWidth2;
-            } else if (newWidth2 > maxWidth2) {
-              newWidth2 = maxWidth2;
-              newWidth1 = rectel1.width + rectel2.width - maxWidth2;
-            }
-    
-            // Apply the boundary limits for .sec1
-            if (newWidth1 < minWidth1) {
-              newWidth1 = minWidth1;
-              newWidth2 = rectel1.width + rectel2.width - minWidth1;
-            } else if (newWidth1 > maxWidth1) {
-              newWidth1 = maxWidth1;
-              newWidth2 = rectel1.width + rectel2.width - maxWidth1;
-            }
-    
-            s2.style.width = newWidth2 + "px";
-            s1.style.width = newWidth1 + "px";
-    
-            prevX = currentX;
-          }
-    
-          function stopResizing() {
-            isResizing = false;
-            window.removeEventListener("mousemove", mousemove);
-            window.removeEventListener("mouseup", mouseup);
-            window.removeEventListener("touchmove", touchmove);
-            window.removeEventListener("touchend", touchend);
-          }
-    
-          function mousemove(e) {
-            resize(e.clientX);
-          }
-    
-          function mouseup() {
-            stopResizing();
-          }
-    
-          function touchmove(e) {
-            resize(e.touches[0].clientX);
-          }
-    
-          function touchend() {
-            stopResizing();
-          }
-    
-          window.addEventListener("mousemove", mousemove);
-          window.addEventListener("mouseup", mouseup);
-          window.addEventListener("touchmove", touchmove);
-          window.addEventListener("touchend", touchend);
-        }
-    
-        resizer.addEventListener("mousedown", (e) => startResizing(e.clientX));
-        resizer.addEventListener("touchstart", (e) => startResizing(e.touches[0].clientX));
-      </script>
-    </body>
-    </html>
 
+
+
+
+    
+    const s2 = document.querySelector(".sec2");
+const s1 = document.querySelector(".sec1");
+let isResizing = false;
+const resizers = document.querySelectorAll(".resizer");
+let currentResizer;
+
+function getMinWidth1() {
+  return window.innerWidth * 0.2; // 20% of the screen width for .sec1
+}
+
+function getMaxWidth1() {
+  return window.innerWidth * 0.9; // 90% of the screen width for .sec1
+}
+
+function getMinWidth2() {
+  return window.innerWidth * 0.1; // 10% of the screen width for .sec2
+}
+
+function getMaxWidth2() {
+  return window.innerWidth * 0.8; // 80% of the screen width for .sec2
+}
+
+for (let resizer of resizers) {
+  resizer.addEventListener("mousedown", startResize);
+  resizer.addEventListener("touchstart", startResize, { passive: false });
+
+  function startResize(e) {
+    e.preventDefault();
+    currentResizer = e.target;
+    currentResizer.classList.add('active'); // Add active class on touch
+    isResizing = true;
+    let prevX = (e.type === "mousedown") ? e.clientX : e.touches[0].clientX;
+
+    function moveResize(e) {
+      if (!isResizing) return;
+      const currentX = (e.type === "mousemove") ? e.clientX : e.touches[0].clientX;
+
+      const minWidth1 = getMinWidth1();
+      const maxWidth1 = getMaxWidth1();
+      const minWidth2 = getMinWidth2();
+      const maxWidth2 = getMaxWidth2();
+
+      const rectel2 = s2.getBoundingClientRect();
+      const rectel1 = s1.getBoundingClientRect();
+
+      let newWidth2 = rectel2.width + (prevX - currentX);
+      let newWidth1 = rectel1.width - (prevX - currentX);
+
+      // Apply the boundary limits for .sec2
+      if (newWidth2 < minWidth2) {
+        newWidth2 = minWidth2;
+        newWidth1 = rectel1.width + rectel2.width - minWidth2;
+      } else if (newWidth2 > maxWidth2) {
+        newWidth2 = maxWidth2;
+        newWidth1 = rectel1.width + rectel2.width - maxWidth2;
+      }
+
+      // Apply the boundary limits for .sec1
+      if (newWidth1 < minWidth1) {
+        newWidth1 = minWidth1;
+        newWidth2 = rectel1.width + rectel2.width - minWidth1;
+      } else if (newWidth1 > maxWidth1) {
+        newWidth1 = maxWidth1;
+        newWidth2 = rectel1.width + rectel2.width - maxWidth1;
+      }
+
+      s2.style.width = newWidth2 + "px";
+      s1.style.width = newWidth1 + "px";
+
+      prevX = currentX;
+    }
+
+    function stopResize() {
+      window.removeEventListener("mousemove", moveResize);
+      window.removeEventListener("mouseup", stopResize);
+      window.removeEventListener("touchmove", moveResize);
+      window.removeEventListener("touchend", stopResize);
+      currentResizer.classList.remove('active'); // Remove active class on touch end
+      isResizing = false;
+    }
+
+    window.addEventListener("mousemove", moveResize);
+    window.addEventListener("mouseup", stopResize);
+    window.addEventListener("touchmove", moveResize, { passive: false });
+    window.addEventListener("touchend", stopResize);
+  }
+}
 
 
 
@@ -391,6 +407,8 @@
             console.log("Error getting download URL: ", error);
         });    
     };
+
+    
 
     const displayImage = (images, index) => {
         if (index >= images.length) {
