@@ -79,6 +79,10 @@
             z-index: -1;
        
         }
+        
+
+
+
 
         .resizer {
             margin-left: 0px;
@@ -201,7 +205,7 @@
         <div id="myModal" class="modal">
        
             <img class="modal-content" id="modalImg">
-            <div class="firimg" id="firstImg"></div>
+  
         </div>
         
         <!-- <div class="heading">
@@ -244,14 +248,13 @@
             this.classList.remove('touch-active');
         });
     });
-    
+
+
+
+
 
     
-    const s2 = document.querySelector(".sec2");
-    const s1 = document.querySelector(".sec1");
-    let isResizing = false;
-    const resizers = document.querySelectorAll(".resizer");
-    let currentResizer;
+
 
     function getMinWidth1() {
         return window.innerWidth * 0.3;
@@ -270,8 +273,18 @@
     }
 
 
+  
 
- 
+
+    const s2 = document.querySelector(".sec2");
+    const s1 = document.querySelector(".sec1");
+    let isResizing = false;
+    const resizers = document.querySelectorAll(".resizer");
+    let currentResizer;
+
+    
+
+    
     for (let resizer of resizers) {
         resizer.addEventListener("mousedown", startResize);
         resizer.addEventListener("touchstart", startResize, {passive: false});
@@ -556,7 +569,8 @@
         modal.style.display = "block";
         modalImg.src = url;
 
-        //console.log("openimg",index);
+        //console.log("fullpath opnimg",fullPath);
+  //      console.log("index opnimg",index); 
         
         currentindex = index;
         currentImageRef = fullPath;
