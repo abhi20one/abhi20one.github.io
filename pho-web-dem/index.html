@@ -10,6 +10,11 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Roboto+Condensed:wght@100&display=swap" rel="stylesheet"> 
+
     <!-- Custom CSS -->
     <style>
         *{
@@ -56,6 +61,7 @@
     
             -ms-overflow-style: none; /* IE and Edge */
             scrollbar-width: none; 
+            
         }
         .temp{
             float: right;
@@ -83,7 +89,7 @@
             border-radius: 0px;
             background-color: rgb(34, 34, 34,0.5);
             z-index: 20;
-            cursor: col-resize;
+      
             transition: background-color 0.3s ease; /* Smooth transition */
           }
           .resizer:hover, .resizer.active {
@@ -98,7 +104,7 @@
             border-radius: 5px;
             background-color: rgba(106, 106, 106, 0.5);
             z-index: 10;
-            cursor: col-resize;
+           
           }
         .longbar {
             position: fixed;
@@ -112,8 +118,8 @@
      
 
         .heading{
-            font-family: Copperplate, Papyrus, fantasy;
-            font-size: 1em;
+            font-family: "Rajdhani", sans-serif;
+            font-size: 1.4em;
             text-align: center;
             color: rgb(255, 255, 255);
             
@@ -143,25 +149,18 @@
             
         } 
 
-        
+       
         .modal-content {
             display: flex;
             justify-content: center;
             align-items: center;
             width: 100%;
-            height: 94vh;         
+            height: 100vh;         
         }
         .modal img {
             object-fit: scale-down;
         }
 
-        /* Media query for smaller screens, e.g., phones */
-        @media screen and (max-width: 768px) {
-        .sec1 {
-        z-index: -1; /* Move sec1 further behind sec2 on smaller screens */
-        min-width: 100px;
-        }
-    }
         
     </style>
 </head>
@@ -198,16 +197,18 @@
     </section>
     
     <section class="sec1"> 
-        <div class="heading">
-            <h2>SHARE IMAGE</h2>
-        </div>
-
+       
         <div id="myModal" class="modal">
+       
             <img class="modal-content" id="modalImg">
             <div class="firimg" id="firstImg"></div>
         </div>
         
-        
+        <!-- <div class="heading">
+            <h2>SHARE IMAGE</h2>
+        </div> -->
+
+
     </section>
 
 <script>
@@ -253,21 +254,24 @@
     let currentResizer;
 
     function getMinWidth1() {
-        return 110;
+        return window.innerWidth * 0.3;
     }
 
     function getMaxWidth1() {
-        return 1900; // Maximum width for .sec1
+        return (window.innerWidth * 1 - 20);
     }
 
     function getMinWidth2() {
-        return 20; // Minimum width for .sec2
+        return 20; //   return window.innerWidth * 0.8;
     }
 
     function getMaxWidth2() {
-        return window.innerWidth * 0.8; // Maximum width for .sec2
+        return window.innerWidth * 0.7;
     }
 
+
+
+ 
     for (let resizer of resizers) {
         resizer.addEventListener("mousedown", startResize);
         resizer.addEventListener("touchstart", startResize, {passive: false});
@@ -282,21 +286,34 @@
             function moveResize(e) {
                 if (!isResizing) return;
                 const currentX = (e.type === "mousemove") ? e.clientX : e.touches[0].clientX;
+      
 
                 const minWidth1 = getMinWidth1();
                 const maxWidth1 = getMaxWidth1();
                 const minWidth2 = getMinWidth2();
                 const maxWidth2 = getMaxWidth2();
+            
+              //  console.log("mn wdth 1",minWidth1);            
+             //   console.log("mx wdth 1",maxWidth1);  
+             //   console.log("mn wdth 2",minWidth2);
+             //  console.log("mx wdth 2",maxWidth2);
+
 
                 const rectel2 = s2.getBoundingClientRect();
                 const rectel1 = s1.getBoundingClientRect();
 
-                let newWidth2 = rectel2.width + (prevX - currentX);
+                
                 let newWidth1 = rectel1.width - (prevX - currentX);
+                let newWidth2 = window.innerWidth - newWidth1;
+
+                
+            //    console.log("newwidth1",newWidth1);  
+             //  console.log("newwidth2",newWidth2);  
 
                 if (newWidth2 < minWidth2) {
                     newWidth2 = minWidth2;
                     newWidth1 = rectel1.width + rectel2.width - minWidth2;
+   
                 } else if (newWidth2 > maxWidth2) {
                     newWidth2 = maxWidth2;
                     newWidth1 = rectel1.width + rectel2.width - maxWidth2;
@@ -314,6 +331,7 @@
                 s1.style.width = newWidth1 + "px";
 
                 prevX = currentX;
+
             }
 
             function stopResize() {
@@ -476,8 +494,8 @@
             currentindex = index = images.length -1;            
         }
 
-        console.log("xxxxxxxxxxxxxxIndex dfl:", index);
-        console.log("current index dfl:", currentindex);
+        //console.log("xxxxxxxxxxxxxxIndex dfl:", index);
+        //console.log("current index dfl:", currentindex);
  
        
    
@@ -486,7 +504,7 @@
             openImage(url,'',index);
             //console.log( imageRef.fullPath); 
 
-            console.log("Imagelength dfl", images.length); 
+//            console.log("Imagelength dfl", images.length); 
 
             //console.log("Image url and index", url, index);
         }).catch(function(error){
@@ -553,7 +571,7 @@
         let endX = null;
 
         let swipeStartTime = null;
-        const SWIPE_TIMEOUT = 1500; 
+        const SWIPE_TIMEOUT = 1000; 
         const sec1Element = document.querySelector('.sec1');
 
         sec1Element.addEventListener('touchstart', (event) => {
@@ -571,11 +589,11 @@
             switch(event.key) {
                 case 'ArrowLeft':
                 defaultImage(images, --currentindex);
-                console.log("left");
+     //           console.log("left");
                     break;
                 case 'ArrowRight':
                 defaultImage(images, ++currentindex);
-                console.log("right");
+    //            console.log("right");
                     break;
             }
         });
@@ -587,15 +605,15 @@
                 if (swipeDuration < SWIPE_TIMEOUT) {
                     if (diff > 50) {
                         // Swipe right, display the next image
-                        console.log("next");
+             //           console.log("next");
                         defaultImage(images, ++currentindex);
                     } else if (diff < -50) {
                         // Swipe left, display the previous image
-                        console.log("previous");
+             //           console.log("previous");
                         defaultImage(images, --currentindex);
                     }
                 } else {
-                    console.log("Swipe ignored due to timeout");
+             //       console.log("Swipe ignored due to timeout");
                 }
                 startX = null;
                 endX = null;
