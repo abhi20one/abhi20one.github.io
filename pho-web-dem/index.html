@@ -471,7 +471,7 @@
 
 
     const listAllImages = () => {
-        noImage();
+        hideImage();
         $('#imageGallery').empty();
         storageRef.child('myimages/').listAll().then(function(result){
             let images = [];
@@ -494,7 +494,7 @@
     const defaultImage = (images, index) => {
 
         if (images.length == 0) {
-            hideImage();  // Call a function to hide the currently displayed image
+            noImage();  // Call a function to hide the currently displayed image
             return;
         }
 
