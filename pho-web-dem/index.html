@@ -624,44 +624,39 @@
   
 
     
-
-    const displayImage = (images, index) => {
-        if (index >= images.length) {
-            return;
-        }
-
-        let imageRef = images[index];
-        imageRef.getDownloadURL().then(function(url){
-            appendImageToGallery(url, imageRef,index);
-
-            //console.log("imageref dsplimg", imageRef.fullPath); 
-            //console.log("Image url and index", url, index); 
-            
-            displayImage(images, index + 1);
-        }).catch(function(error){
-            console.log("Error getting download URL: ", error);
-        });    
-
-        
+    const displayImage = (images) => {
+        let imageUrls = [];
+        let imagesProcessed = 0;
+    
+        images.forEach((imageRef, index) => {
+            imageRef.getDownloadURL().then(function(url) {
+                imageUrls[index] = { url, imageRef, index };
+                imagesProcessed++;
+    
+                if (imagesProcessed === images.length) {
+                  
+                    appendImagesToGallery(imageUrls);       
+                }
+            }).catch(function(error) {
+                console.log("Error getting download URL: ", error);
+                imagesProcessed++;
+    
+                // Still check if all images are processed even if there is an error
+                if (imagesProcessed === images.length) {
+                    appendImagesToGallery(imageUrls);
+                }
+            });
+        });
     };
-
-
-    const appendImageToGallery = (url, imageRef,index) => {
-        //console.log("Appending image to gallery:", url);
-        
-        //console.log("append",index);
-       
-     //   console.log("imageref appndimg",imageRef.fullPath);
-
-        $('#imageGallery').append(`
-            <div>
-                <img src="${url}" alt="Image" onclick="openImage('${url}', '${imageRef.fullPath}','${index}')">
-            </div>
-        `);
-
-
+    const appendImagesToGallery = (imageUrls) => {
+        imageUrls.forEach(({ url, imageRef, index }) => {
+            $('#imageGallery').append(`
+                <div>
+                    <img src="${url}" alt="Image" onclick="openImage('${url}', '${imageRef.fullPath}','${index}')">
+                </div>
+            `);
+        });
     };
-
 
 
     
@@ -672,7 +667,7 @@
         modalImg.src = url;
 
    //     console.log("fullpath opnimg",fullPath);
-  //      console.log("index opnimg",index); 
+        console.log("index opnimg",index); 
         
         currentindex = index;
         currentImageRef = fullPath;
@@ -709,7 +704,7 @@
             //console.log( imageRef.fullPath); 
          //   console.log("imageref dsplimg", imageRef.fullPath); 
           //  console.log("Imagelength dfl", images.length); 
-            //console.log("Image url and index", url, index);
+            console.log("Image url and index dfl", url, index);
     
         }).catch(function(error){
             console.log("Error getting download URL: ", error);
