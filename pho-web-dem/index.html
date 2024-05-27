@@ -25,8 +25,8 @@
   
 
         body {
-            background-color: rgb(0, 0, 0);
-            
+            background-color: rgb(34, 34, 34)
+    
         }
 
 
@@ -39,18 +39,16 @@
             width:110px;
             transition: background-color 0.3s ease; 
             user-select: none; 
+            
         }
-
     
-
-        button.touch-active{
-            background-color: rgb(153, 153, 153);
+        .btngrp{
+            margin-top: 1vh;
+            margin-left: 22px;
         }
-
       
         
         .sec2{
-            
             float: right;
             width: 40%;
             height:100vh;
@@ -79,9 +77,21 @@
             z-index: -1;
        
         }
-        
 
 
+        .mobile .sec2 {
+            width: 150px;
+        }
+        .mobile .sec1 {
+            width: calc(100% - 150px);
+        }
+        .mobile button.touch-active{
+            background-color: rgb(153, 153, 153);
+        }
+        .pc button:hover{
+            background-color: rgb(153, 153, 153);
+        }
+   
 
 
         .resizer {
@@ -94,7 +104,7 @@
             background-color: rgb(34, 34, 34,0.5);
             z-index: 20;
       
-            transition: background-color 0.3s ease; /* Smooth transition */
+            transition: background-color 0.2s ease; /* Smooth transition */
           }
           .resizer:hover, .resizer.active {
             background-color: rgba(106, 106, 106, 0); /* Lighter color on hover and touch */
@@ -106,7 +116,7 @@
             height: 100px;
             width: 10px;
             border-radius: 5px;
-            background-color: rgba(106, 106, 106, 0.5);
+            background-color: rgba(144, 144, 144, 0.5);
             z-index: 10;
            
           }
@@ -131,13 +141,12 @@
 
 
         .gallery {
+            margin-top: 1vh;
             margin-left: 20px;
             display: flex;
             flex-wrap: wrap;
         }
-        .btngrp {
-            margin-left: 22px;
-        }
+      
 
         .gallery img {
             max-width:100px;
@@ -164,32 +173,36 @@
         .modal img {
             object-fit: scale-down;
         }
+        
 
         
     </style>
 </head>
 <body>
 
+
+
+  
+
+
     <section class="sec2"> 
         
-        
-            <div class="btngrp">
-                <input type="file" class="inp" style="display:none" multiple onchange="getImageData(event)">
+        <div class="btngrp">
+            <input type="file" class="inp" style="display:none" multiple onchange="getImageData(event)">
 
-                <button class="b1" onclick="selectImage()">Select Images</button>
-                <button class="b2" onclick="uploadImages()">Upload Images</button>
-                <button class="b3" onclick="cancelSelection()">Clear</button>
-                <button class="b4" onclick="deleteSelectedImage()">Delete</button>
+            <button class="b1" onclick="selectImage()">Select Images</button>
+            <button class="b2" onclick="uploadImages()">Upload Images</button>
+            <button class="b3" onclick="cancelSelection()">Clear</button>
+            <button class="b4" onclick="deleteSelectedImage()">Delete</button>
 
-                <div class="filedata" style="display:none"></div>
-                <div class="progress"></div>
-                <div class="loading"></div>
-                
-            </div>
-
+            <div class="filedata" style="display:none"></div>
+            <div class="progress"></div>
+            <div class="loading"></div>
             
-          
+        </div>
+         
             
+
             <div class="gallery" id="imageGallery"></div>
             <div class="resizer"></div>
             <div class="smallbar"></div>
@@ -215,10 +228,21 @@
 
     </section>
 
+
+
+    
+
 <script>
 
 
-   
+    function isMobileDevice() {
+        return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+    }
+    if (isMobileDevice()) {
+        document.body.classList.add('mobile');
+    }   else {
+        document.body.classList.add('pc');
+    }
 
 
 
@@ -491,8 +515,68 @@
         });
     };
 
-    const defaultImage = (images, index) => {
+  
 
+    
+
+    const displayImage = (images, index) => {
+        if (index >= images.length) {
+            return;
+        }
+
+        let imageRef = images[index];
+        imageRef.getDownloadURL().then(function(url){
+            appendImageToGallery(url, imageRef,index);
+
+            //console.log("imageref dsplimg", imageRef.fullPath); 
+            //console.log("Image url and index", url, index); 
+            
+            displayImage(images, index + 1);
+        }).catch(function(error){
+            console.log("Error getting download URL: ", error);
+        });    
+
+        
+    };
+
+
+    const appendImageToGallery = (url, imageRef,index) => {
+        //console.log("Appending image to gallery:", url);
+        
+        //console.log("append",index);
+       
+     //   console.log("imageref appndimg",imageRef.fullPath);
+
+        $('#imageGallery').append(`
+            <div>
+                <img src="${url}" alt="Image" onclick="openImage('${url}', '${imageRef.fullPath}','${index}')">
+            </div>
+        `);
+
+
+    };
+
+
+
+    
+    const openImage = (url, fullPath,index) => {
+        const modal = document.getElementById("myModal");
+        const modalImg = document.getElementById("modalImg");
+        modal.style.display = "block";
+        modalImg.src = url;
+
+   //     console.log("fullpath opnimg",fullPath);
+  //      console.log("index opnimg",index); 
+        
+        currentindex = index;
+        currentImageRef = fullPath;
+             
+    };
+
+
+
+    const defaultImage = (images, index) => {
+    
         if (images.length == 0) {
             noImage();  // Call a function to hide the currently displayed image
             return;
@@ -514,73 +598,24 @@
    
         let imageRef = images[index];
         imageRef.getDownloadURL().then(function(url){
-            openImage(url,'',index);
-            //console.log( imageRef.fullPath); 
-
-//            console.log("Imagelength dfl", images.length); 
-
-            //console.log("Image url and index", url, index);
-        }).catch(function(error){
-            console.log("Error getting download URL: ", error);
-        });    
-    };
-
-    
-
-    const displayImage = (images, index) => {
-        if (index >= images.length) {
-            return;
-        }
-        let imageRef = images[index];
-        imageRef.getDownloadURL().then(function(url){
-            appendImageToGallery(url, imageRef,index);
-
-            //console.log("Image url and index", url, index); 
+            openImage(url,imageRef.fullPath,index);
             
-            displayImage(images, index + 1);
+            //console.log( imageRef.fullPath); 
+         //   console.log("imageref dsplimg", imageRef.fullPath); 
+          //  console.log("Imagelength dfl", images.length); 
+            //console.log("Image url and index", url, index);
+    
         }).catch(function(error){
             console.log("Error getting download URL: ", error);
         });    
-
-        
-    };
-
-
-    const appendImageToGallery = (url, imageRef,index) => {
-        //console.log("Appending image to gallery:", url);
-        
-        //console.log("append",index);
-        
-        $('#imageGallery').append(`
-            <div>
-                <img src="${url}" alt="Image" onclick="openImage('${url}', '${imageRef.fullPath}','${index}')">
-            </div>
-        `);
-
-    };
-
-
-    
-
-    
-    const openImage = (url, fullPath,index) => {
-        const modal = document.getElementById("myModal");
-        const modalImg = document.getElementById("modalImg");
-        modal.style.display = "block";
-        modalImg.src = url;
-
-        //console.log("fullpath opnimg",fullPath);
-  //      console.log("index opnimg",index); 
-        
-        currentindex = index;
-        currentImageRef = fullPath;
-             
     };
 
 
     
 
     const navImage = (images, index) => {     
+
+
         let startX = null;
         let endX = null;
 
@@ -608,6 +643,9 @@
                 case 'ArrowRight':
                 defaultImage(images, ++currentindex);
     //            console.log("right");
+                    break;
+                case 'Delete':
+                deleteSelectedImage();
                     break;
             }
         });
@@ -703,14 +741,9 @@
 
 
 
-   
-
     // Initial load of images
     document.addEventListener('DOMContentLoaded', listAllImages);
 
-
-
-    
 
             
 </script>
