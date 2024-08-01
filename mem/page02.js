@@ -257,7 +257,7 @@ function appendImagesToGallery(imageUrls) {
     imageUrls.forEach(({ url, imageRef, index }) => {
         $('#imageGallery').prepend(`
             <div>
-                <img src="${url}" alt="Image" loading="lazy" onclick="openImage('${url}', '${imageRef.fullPath}', '${index}')">
+                <img src="${url}" alt="Image" onclick="openImage('${url}', '${imageRef.fullPath}', '${index}')">
             </div>
         `);
     });
@@ -317,18 +317,6 @@ function openImage(url, fullPath, index) {
 
 
 
-function openImage(url) {
-    const modal = document.getElementById("myModal");
-    const modalImg = document.getElementById("modalImg");
-    modal.style.display = "block";
-    modalImg.src = url;
-
-//     console.log("fullpath opnimg",fullPath);
-    console.log("index opnimg",index); 
-    
-    currentindex = index;
-    currentImageRef = fullPath;
-}
 
 function defaultImage(images, index) {
     if (images.length == 0) {
