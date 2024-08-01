@@ -384,7 +384,7 @@ function deleteSelectedImage() {
 
 function displaynextImage() {
     $('#imageGallery').empty();
-    storageRef.child('myimages/').listAll().then(function(result){
+    storageRef.child(folderName + '/').listAll().then(function(result){
         let images = [];
         result.items.forEach(function(imageRef){
             images.push(imageRef);
