@@ -119,23 +119,25 @@ function addSection() {
         // Reference to the parent folder
         const parentFolderRef = storageRef.child(newFolderName + '/');
         
-        // Creating a subfolder
-        const subFolderName = "sub";
-        if (subFolderName) {
-            const subFolderRef = parentFolderRef.child(subFolderName + '/');
-            
-            // Create an empty file to simulate a folder
-            subFolderRef.child('.empty').putString('')
-                .then(() => {
-                    console.log('Subfolder created successfully.');
-                    renderSections(); // Refresh the section list
-                })
-                .catch(error => {
-                    console.error('Error creating subfolder in Firebase:', error);
+        // Check if the folder already exists
+        parentFolderRef.listAll().then(result => {
+            if (result.prefixes.length > 0) {
+                // Folder exists
+                alert("Folder already exists.");
+            } else {
+                // Create the new folder
+                const subFolderName = "sub";
+                const subFolderRef = parentFolderRef.child(subFolderName + '/');
+                subFolderRef.child('.empty').putString('').then(() => {
+                    renderSections(); // Refresh the sections after creation
+                }).catch(error => {
+                    console.error('Error creating folder in Firebase:', error);
                 });
-        } else {
-            alert("Subfolder name cannot be empty.");
-        }
+            }
+        }).catch(error => {
+            console.error('Error checking folder existence:', error);
+        });
+
     } else {
         alert("Folder name cannot be empty.");
     }

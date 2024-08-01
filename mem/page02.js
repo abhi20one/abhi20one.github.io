@@ -212,34 +212,112 @@ function displayImage(images) {
 
     images.forEach((imageRef, index) => {
         imageRef.getDownloadURL().then(function(url) {
-            imageUrls[index] = { url, imageRef, index };
-            imagesProcessed++;
+            let img = new Image();
+            img.src = url;
 
-            if (imagesProcessed === images.length) {
-                appendImagesToGallery(imageUrls);
-            }
+            img.onload = function() {
+                imageUrls[index] = { url, imageRef, index };
+                imagesProcessed++;
+
+                // Once all images are processed, sort and append them
+                if (imagesProcessed === images.length) {
+                    // Sort images by their index in descending order
+                    imageUrls.sort((a, b) => b.index - a.index);
+                    appendImagesToGallery(imageUrls);
+                }
+            };
+
+            img.onerror = function(error) {
+                console.log("Error loading image: ", error);
+                imagesProcessed++;
+
+                // Check if all images are processed
+                if (imagesProcessed === images.length) {
+                    // Sort and display images even if some failed to load
+                    imageUrls.sort((a, b) => b.index - a.index);
+                    appendImagesToGallery(imageUrls);
+                }
+            };
         }).catch(function(error) {
             console.log("Error getting download URL: ", error);
             imagesProcessed++;
 
-            // Still check if all images are processed even if there is an error
+            // Check if all images are processed
             if (imagesProcessed === images.length) {
+                // Sort and display images even if some failed to load
+                imageUrls.sort((a, b) => b.index - a.index);
                 appendImagesToGallery(imageUrls);
             }
         });
     });
 }
+
 function appendImagesToGallery(imageUrls) {
+    $('#imageGallery').empty(); // Clear existing images
     imageUrls.forEach(({ url, imageRef, index }) => {
-        $('#imageGallery').append(`
+        $('#imageGallery').prepend(`
             <div>
-                <img src="${url}" alt="Image" onclick="openImage('${url}', '${imageRef.fullPath}','${index}')">
+                <img src="${url}" alt="Image" loading="lazy" onclick="openImage('${url}', '${imageRef.fullPath}', '${index}')">
             </div>
         `);
     });
 }
 
+
+// function displayImage(images) {
+//     let imageUrls = [];
+//     let imagesProcessed = 0;
+
+//     images.forEach((imageRef, index) => {
+//         imageRef.getDownloadURL().then(function(url) {
+//             imageUrls[index] = { url, imageRef, index };
+//             imagesProcessed++;
+
+//             if (imagesProcessed === images.length) {
+//                 appendImagesToGallery(imageUrls);
+//             }
+//         }).catch(function(error) {
+//             console.log("Error getting download URL: ", error);
+//             imagesProcessed++;
+
+//             // Still check if all images are processed even if there is an error
+//             if (imagesProcessed === images.length) {
+//                 appendImagesToGallery(imageUrls);
+//             }
+//         });
+//     });
+// }
+// function appendImagesToGallery(imageUrls) {
+//     imageUrls.forEach(({ url, imageRef, index }) => {
+//         $('#imageGallery').append(`
+//             <div>
+//                 <img src="${url}" onclick="openImage('${url}', '${imageRef.fullPath}','${index}')">
+//             </div>
+//         `);
+//     });
+// }
+
+
+
+
+
+
 function openImage(url, fullPath, index) {
+    const modal = document.getElementById("myModal");
+    const modalImg = document.getElementById("modalImg");
+    modal.style.display = "block";
+    modalImg.src = url;
+
+//     console.log("fullpath opnimg",fullPath);
+    console.log("index opnimg",index); 
+    
+    currentindex = index;
+    currentImageRef = fullPath;
+}
+
+
+
+function openImage(url) {
     const modal = document.getElementById("myModal");
     const modalImg = document.getElementById("modalImg");
     modal.style.display = "block";
