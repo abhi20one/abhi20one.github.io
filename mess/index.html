@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display User Input</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: rgb(79, 79, 79);
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background-color: #fff;
+            height: 70vh; /* Adjust height as needed */
+            overflow-y: auto; /* Allow vertical scrolling */
+            display: flex;
+            flex-direction: column;
+        }
+        .display {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            margin-top: 10px;
+        }
+        .input-group {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 10px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="displayContainer">
+        <!-- Dynamic content will be added here -->
+    </div>
+
+    <div class="input-group">
+        <label for="userInput">Enter some text:</label>
+        <input type="text" id="userInput" />
+        <button onclick="displayInput()">Submit</button>
+    </div>
+
+    <script>
+        window.onload = function() {
+            username = prompt("Please enter your name:");
+        };
+
+        function displayInput() {
+            var input = document.getElementById('userInput').value;
+
+            if (input.trim() === '') return; // Prevent empty submissions
+
+            // Create a new div element
+            var newDiv = document.createElement('div');
+            newDiv.classList.add('display');
+            newDiv.innerHTML = `<p>${username}</p><p>${input}</p>`;
+
+            // Append the new div to the display container
+            var displayContainer = document.getElementById('displayContainer');
+            displayContainer.appendChild(newDiv);
+
+            // Scroll to the bottom of the display container
+            displayContainer.scrollTop = displayContainer.scrollHeight;
+
+            // Clear the text box
+            document.getElementById('userInput').value = '';
+        }
+
+        // Add event listener for the Enter key
+        document.getElementById('userInput').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent the default action of Enter key (e.g., form submission)
+                displayInput();
+            }
+        });
+    </script>
+</body>
+</html>
