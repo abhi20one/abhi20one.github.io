@@ -7,22 +7,28 @@
     <style>
 
         body {
-            color: #ccc;
+            color: #ffffff;
             font-family: Arial, sans-serif;
-            background-color: rgb(34, 34, 34);
+            background-color: rgb(255, 255, 255);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
         }
+
+        img{
+            position:fixed;
+            height:120vh;
+            z-index: -10;
+        }
         
         .login-container {
-            color: #ccc;
-            background-color: rgb(43, 43, 43);
+            color: #ffffff;
+            background-color: rgba(0, 0, 0, 0.16);
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0);
             width: 300px;
             text-align: center;
         }
@@ -43,39 +49,43 @@
         }
         
         .input-group input {
-            background-color: #ccc;
+            background-color: #ffffff;
             width: 100%;
             padding: 8px;
-            border: 0px solid #ccc;
+            border: 0px solid #ffffff;
             border-radius: 2px;
         }
         
         button {
             width: 100%;
             padding: 10px;
-            background-color: rgb(59, 59, 59);
+            background-color: rgb(6, 3, 139);
             border: none;
             border-radius: 4px;
-            color: rgb(208, 208, 208);
+            color: rgb(255, 255, 255);
             font-size: 16px;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
         
         button:hover {
-            background-color: rgb(123, 123, 123);
+            background-color: rgb(3, 0, 194);
+
         }
         
 
     </style>
 </head>
 <body>
+    
+    <img src="orange.png">
+
     <div class="login-container">
         <h1>Login</h1>
         <form id="loginForm">
             <div class="input-group">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
+                <label for="useremail">Useremail:</label>
+                <input type="text" id="useremail" name="useremail" required>
             </div>
             <div class="input-group">
                 <label for="password">Password:</label>
@@ -83,7 +93,7 @@
             </div>
             <button type="submit">Login</button>
         </form>
-        <p id="error-message" style="color: red; display: none;">Invalid username or password.</p>
+        <p id="error-message" style="color: red; display: none;">Invalid useremail or password.</p>
     </div>
 
     <script>
@@ -92,11 +102,11 @@
             event.preventDefault(); // Prevent the form from submitting the traditional way
         
             // Get the values from the form
-            const username = document.getElementById('username').value;
+            const useremail = document.getElementById('useremail').value;
             const password = document.getElementById('password').value;
         
             // Check credentials
-            if (username === '1234' && password === '1234') {
+            if (useremail === '1234' && password === '1234') {
                 // Redirect to another page upon successful login
                 window.location.href = 'page01.html'; // Change 'welcome.html' to your target page
             } else {

@@ -22,14 +22,14 @@
             text-align: center;
             font-size: 25px;
             background-color: rgb(34, 34, 34);
-            
         }     
         section{
       
             width: 100%;
             height: 211px;
-            background-color: rgb(34, 34, 34);  
-            border-radius: 10px;
+            background-color: rgb(34, 34, 34);
+  
+            border-radius: 0px;
             
         }    
         .add {
@@ -60,17 +60,18 @@
         }
       
         .frame{
-            margin-top: 12.5px;
+            margin-top: 35px;
             margin-bottom: 0px;
-            margin-left: 10px;
-            margin-right: 10px;
+            margin-left: 100px;
+            margin-right: 100px;
             top:-30px;
             display: flex;
             position: relative;
             width: auto; /* Adjust size as needed */
-            height: 199px; /* Adjust size as needed */
+            height: 180px; /* Adjust size as needed */
             background-color: #000000; /* Fallback color */
-            border-radius: 2.5px; /* Optional: for rounded corners */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.274);
+            border-radius: 20px; /* Optional: for rounded corners */
         }   
         
         .opt{
@@ -78,8 +79,8 @@
             display: flex;
             position: relative;
             float: right;
-            top: 7px;
-            left: -13px;
+            top: 35px;
+            left: -115px;
             width: 30px;
             height: 30px;
             border-radius: 30px;
@@ -98,7 +99,7 @@
             width: 4px;
             margin: 2px;
             border-radius: 2px;
-            background-color: rgb(208, 208, 208);
+            background-color: rgb(255, 255, 255);
         }    
         
         button{
@@ -108,7 +109,7 @@
             border-radius: 1.75px;
             height:40px;
             width:110px;
-            border: 5px solid rgb(47, 47, 47);
+            border: 0px solid rgb(47, 47, 47);
             background-color: rgb(70, 70, 70);
             transition: background-color 0.3s ease; 
             user-select: none;  
@@ -126,8 +127,8 @@
             background-color: rgb(43, 43, 43);
             color: rgb(183, 183, 183);
             float: right;
-            top:5px;
-            right:100px;
+            top:35px;
+            right:190px;
             height: 0px; /* Adjusted height */
             width: 0px;
            display: none;
@@ -147,13 +148,31 @@
         position: relative;
         display: flex;
         font-family: Arial, sans-serif;
-        color: #ccc;
-        left:17px;
+        color: #ffffff;
+        left:115px;
         top: 180px;
         }
 
         section.dynamic .tab {
-        height:220.5px;
+        height:240.5px;
+        }
+
+        @media (max-width: 768px) {
+            .frame{
+                margin-left: 20px;
+                margin-right: 20px;
+            } 
+            .opt{
+                left: -35px;
+            }
+            section.dynamic p {
+                left:35px;
+            }
+            .menu {
+                top:35px;
+                right:115px;
+ 
+            }
         }
 
     </style>
