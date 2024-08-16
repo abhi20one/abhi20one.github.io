@@ -19,7 +19,6 @@ const storageRef = storage.ref();
 
 function get() {
     folderName = sessionStorage.getItem("folname");
-    //console.log("folname:", folname);
 }
 
 
@@ -41,32 +40,21 @@ $(document).ready(function() {
     $('.resizer').on('click', function() {
         if (isCollapsed) {
             
-            $('.sec1').stop().animate({
-                width: originalWidth2 + 'px'
-            }, 300);
+            $('.sec1').animate({width: originalWidth2 + 'px'}, 300);
 
-            $('.right-container').stop().animate({
-                width: originalWidth1 + 'px'
-            }, 300, function() {
-                
-            
-            });
+            $('.right-container').animate({width: originalWidth1 + 'px'}, 300);
+           
             isCollapsed = false;
         } else {
 
-            let pageWidth = $(window).width()-20;
+            let pageWidth = $(window).width();
 
-            $('.sec1').stop().animate({
-                width: pageWidth + 'px'
-            }, 300);
+            $('.sec1').animate({width: pageWidth + 'px'}, 300);
 
             originalWidth1 = $('.right-container').width(); 
-            $('.right-container').stop().animate({
-                width: '20px'
-            }, 300, function() {
-               
+
+            $('.right-container').animate({width: '20px'}, 300);
             
-            });
             isCollapsed = true;
         }
     });
@@ -138,7 +126,6 @@ function uploadImages() {
         return;
     }
 
-    $('.loading').css('display', 'block');
 
     // Track the number of successfully uploaded images
     let uploadedCount = 0;
@@ -160,25 +147,20 @@ function uploadImages() {
                     const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
                     $('.progress').css('width', progress + '%').text(progress + '%');
                 },
-                (error) => {
-                    console.log(error);
-                    $('.loading').css('display', 'none');
-                },
+                (error) => {console.log(error);},
                 () => {
-                    console.log("File Uploaded Successfully");
+                    $('.filedata').append('<div>Files uploaded</div>');
                     // Increase the count of uploaded images
                     uploadedCount++;
 
                     // If all files are uploaded, hide loading indicator and refresh gallery
                     if (uploadedCount === files.length) {
-                        $('.loading').css('display', 'none');
+
                         listAllImages();
                     }
                 }
             );
         }
-    }).catch(function(error) {
-        console.log("Error listing images: ", error);
     });
 }
 
@@ -198,11 +180,9 @@ function listAllImages() {
         });
 
         defaultImage(images, 0);
-        displayImage(images, 0);
-        navImage(images, 0);
+        displayImage(images);
+        navImage(images);
         
-    }).catch(function(error) {
-        console.log("Error listing images: ", error);
     });
 }
 
@@ -227,33 +207,11 @@ function displayImage(images) {
                 }
             };
 
-            img.onerror = function(error) {
-                console.log("Error loading image: ", error);
-                imagesProcessed++;
-
-                // Check if all images are processed
-                if (imagesProcessed === images.length) {
-                    // Sort and display images even if some failed to load
-                    imageUrls.sort((a, b) => b.index - a.index);
-                    appendImagesToGallery(imageUrls);
-                }
-            };
-        }).catch(function(error) {
-            console.log("Error getting download URL: ", error);
-            imagesProcessed++;
-
-            // Check if all images are processed
-            if (imagesProcessed === images.length) {
-                // Sort and display images even if some failed to load
-                imageUrls.sort((a, b) => b.index - a.index);
-                appendImagesToGallery(imageUrls);
-            }
         });
     });
 }
 
 function appendImagesToGallery(imageUrls) {
-    $('#imageGallery').empty(); // Clear existing images
     imageUrls.forEach(({ url, imageRef, index }) => {
         $('#imageGallery').prepend(`
             <div>
@@ -262,41 +220,6 @@ function appendImagesToGallery(imageUrls) {
         `);
     });
 }
-
-
-// function displayImage(images) {
-//     let imageUrls = [];
-//     let imagesProcessed = 0;
-
-//     images.forEach((imageRef, index) => {
-//         imageRef.getDownloadURL().then(function(url) {
-//             imageUrls[index] = { url, imageRef, index };
-//             imagesProcessed++;
-
-//             if (imagesProcessed === images.length) {
-//                 appendImagesToGallery(imageUrls);
-//             }
-//         }).catch(function(error) {
-//             console.log("Error getting download URL: ", error);
-//             imagesProcessed++;
-
-//             // Still check if all images are processed even if there is an error
-//             if (imagesProcessed === images.length) {
-//                 appendImagesToGallery(imageUrls);
-//             }
-//         });
-//     });
-// }
-// function appendImagesToGallery(imageUrls) {
-//     imageUrls.forEach(({ url, imageRef, index }) => {
-//         $('#imageGallery').append(`
-//             <div>
-//                 <img src="${url}" onclick="openImage('${url}', '${imageRef.fullPath}','${index}')">
-//             </div>
-//         `);
-//     });
-// }
-
 
 
 
@@ -308,7 +231,7 @@ function openImage(url, fullPath, index) {
     modal.style.display = "block";
     modalImg.src = url;
 
-//     console.log("fullpath opnimg",fullPath);
+ 
     console.log("index opnimg",index); 
     
     currentindex = index;
@@ -332,24 +255,18 @@ function defaultImage(images, index) {
         currentindex = index = images.length -1;            
     }
 
-    //console.log("xxxxxxxxxxxxxxIndex dfl:", index);
-    //console.log("current index dfl:", currentindex);
-
+ 
     let imageRef = images[index];
     imageRef.getDownloadURL().then(function(url){
         openImage(url, imageRef.fullPath, index);
         
-        //console.log( imageRef.fullPath); 
-     //   console.log("imageref dsplimg", imageRef.fullPath); 
-      //  console.log("Imagelength dfl", images.length); 
+ 
         console.log("Image url and index dfl", url, index);
 
-    }).catch(function(error){
-        console.log("Error getting download URL: ", error);
     });    
 }
 
-function navImage(images, index) {     
+function navImage(images) {     
     let startX = null;
     let endX = null;
 
@@ -366,33 +283,28 @@ function navImage(images, index) {
         endX = event.touches[0].clientX;
     });
 
-    //console.log("nav index:",currentindex);
+ 
     
     document.addEventListener('keydown', (event) => {
         switch(event.key) {
             case 'ArrowLeft':
             defaultImage(images, --currentindex);
- //           console.log("left");
+ 
                 break;
             case 'a':
             defaultImage(images, --currentindex);
- //           console.log("left");
                 break;
             case 'A':
             defaultImage(images, --currentindex);
- //           console.log("left");
                 break;
             case 'ArrowRight':
             defaultImage(images, ++currentindex);
-//            console.log("right");
                 break;
             case 'd':
             defaultImage(images, ++currentindex);
-//            console.log("right");
                 break;
             case 'D':
             defaultImage(images, ++currentindex);
-//            console.log("right");
                 break;
             case 'Delete':
             deleteSelectedImage();
@@ -406,16 +318,11 @@ function navImage(images, index) {
             let diff = startX - endX;
             if (swipeDuration < SWIPE_TIMEOUT) {
                 if (diff > 50) {
-                    // Swipe right, display the next image
-         //           console.log("next");
                     defaultImage(images, ++currentindex);
                 } else if (diff < -50) {
-                    // Swipe left, display the previous image
-         //           console.log("previous");
                     defaultImage(images, --currentindex);
                 }
             } else {
-         //       console.log("Swipe ignored due to timeout");
             }
             startX = null;
             endX = null;
@@ -433,7 +340,6 @@ function noImage() {
 }
 
 function deleteSelectedImage() {
-    //console.log("del",currentindex);
     if (!currentImageRef) {
         alert("No image selected to delete.");
         return;
@@ -443,8 +349,6 @@ function deleteSelectedImage() {
     storageRef.child(currentImageRef).delete().then(() => {
         console.error(currentImageRef);
         displaynextImage();
-    }).catch((error) => {
-        console.error("Error deleting image: ", error);
     });
 }
 
@@ -465,8 +369,6 @@ function displaynextImage() {
         
         defaultImage(images, currentindex);
         displayImage(images, 0);
-    }).catch(function(error){
-        console.log("Error listing images: ", error);
     });
 }
 

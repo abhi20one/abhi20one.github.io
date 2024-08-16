@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Share Image</title>
+    <title>Folder menu</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
@@ -18,15 +18,23 @@
             scrollbar-width: none;
         }   
         body{
+            margin-right: 100px;
+            margin-left: 100px;
             background: rgb(255, 255, 255);
             text-align: center;
             font-size: 25px;
             background-color: rgb(34, 34, 34);
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two equal columns */
+            gap: 0px; /* Space between the columns */
+            padding: 0px;
+            justify-items: center; /* Center frames horizontally */
+            align-items: start; 
         }     
         section{
       
             width: 100%;
-            height: 211px;
+            height: 290px;
             background-color: rgb(34, 34, 34);
   
             border-radius: 0px;
@@ -60,18 +68,18 @@
         }
       
         .frame{
-            margin-top: 35px;
+            margin-top: 15px;
             margin-bottom: 0px;
-            margin-left: 100px;
-            margin-right: 100px;
+            margin-left: 5px;
+            margin-right: 5px;
             top:-30px;
             display: flex;
             position: relative;
             width: auto; /* Adjust size as needed */
-            height: 180px; /* Adjust size as needed */
+            height: 280px; /* Adjust size as needed */
             background-color: #000000; /* Fallback color */
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.274);
-            border-radius: 20px; /* Optional: for rounded corners */
+            border-radius: 2.5px; /* Optional: for rounded corners */
         }   
         
         .opt{
@@ -79,8 +87,8 @@
             display: flex;
             position: relative;
             float: right;
-            top: 35px;
-            left: -115px;
+            top: 10px;
+            left: -10px;
             width: 30px;
             height: 30px;
             border-radius: 30px;
@@ -128,7 +136,7 @@
             color: rgb(183, 183, 183);
             float: right;
             top:35px;
-            right:190px;
+            right:100px;
             height: 0px; /* Adjusted height */
             width: 0px;
            display: none;
@@ -149,30 +157,45 @@
         display: flex;
         font-family: Arial, sans-serif;
         color: #ffffff;
-        left:115px;
-        top: 180px;
+        left:10px;
+        top: 265px;
         }
 
         section.dynamic .tab {
-        height:240.5px;
+        height:306px;
         }
 
         @media (max-width: 768px) {
             .frame{
-                margin-left: 20px;
-                margin-right: 20px;
+                margin-top: 12px;
+                margin-left: 10px;
+                margin-right: 10px;
+                height: 180px;
             } 
             .opt{
-                left: -35px;
+                top: 10px;
+                left: -15px;
             }
             section.dynamic p {
-                left:35px;
+                left:15px;
+                top: 165px;
             }
+            section{
+                height: 190px;  
+            }
+            body{
+                margin-left: 0px;
+                margin-right: 0px;
+                display:block;
+            } 
             .menu {
-                top:35px;
-                right:115px;
+                top:20px;
+                right:100px;
  
             }
+            section.dynamic .tab {
+                height:200px;
+                }
         }
 
     </style>
