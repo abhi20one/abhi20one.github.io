@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Resizer</title>
+  
+</head>
+<body>
+    <h1>Image Resizer</h1>
+    <input type="file" id="imageInput" accept="image/*">
+    <br><br>
+
+
+    <input type="checkbox" id="maintainAspectRatio" checked>
+    <label for="maintainAspectRatio">Maintain Aspect Ratio</label>
+    <br>
+    <input type="checkbox" id="invertColors">
+    <label for="invertColors">Invert Colors</label>
+    <br>
+    <br>
+    <label for="bgColor">Background Color:</label>
+    <select id="bgColor">
+        <option value="black">Black</option>
+        <option value="white">White</option>
+    </select>
+    <br>
+    
+
+
+    <br>
+    <button id="convertButton">Resize Image</button>
+    <br><br>
+    <canvas id="canvas"></canvas>
+    <br><br>
+    <button id="downloadButton">Download 1-Bit Image</button>
+
+
+
+    <script>
+        document.getElementById('convertButton').addEventListener('click', function () {
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const imageInput = document.getElementById('imageInput');
+            const file = imageInput.files[0];
+            if (!file) return;
+        
+            const maintainAspectRatio = document.getElementById('maintainAspectRatio').checked;
+            const invertColors = document.getElementById('invertColors').checked;
+            const bgColor = document.getElementById('bgColor').value;
+        
+            const img = new Image();
+            img.crossOrigin = 'Anonymous'; // Handle cross-origin images
+            img.onload = function () {
+                const targetWidth = 128;
+                const targetHeight = 64;
+        
+                let newWidth, newHeight;
+                if (maintainAspectRatio) {
+                    // Calculate aspect ratio and resize
+                    const aspectRatio = img.width / img.height;
+        
+                    if (aspectRatio > targetWidth / targetHeight) {
+                        newWidth = targetWidth;
+                        newHeight = targetWidth / aspectRatio;
+                    } else {
+                        newWidth = targetHeight * aspectRatio;
+                        newHeight = targetHeight;
+                    }
+                } else {
+                    // Resize without maintaining aspect ratio
+                    newWidth = targetWidth;
+                    newHeight = targetHeight;
+                }
+        
+                const offsetX = (targetWidth - newWidth) / 2;
+                const offsetY = (targetHeight - newHeight) / 2;
+        
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+        
+                // Fill canvas with selected background color
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, targetWidth, targetHeight);
+        
+                // Draw the image onto the canvas
+                ctx.drawImage(img, offsetX, offsetY, newWidth, newHeight);
+        
+                // Convert to 1-bit bitmap
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imageData.data;
+        
+                // Convert to grayscale
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i];
+                    const g = data[i + 1];
+                    const b = data[i + 2];
+                    const gray = (r + g + b) / 3;
+                    data[i] = gray; // Red
+                    data[i + 1] = gray; // Green
+                    data[i + 2] = gray; // Blue
+                }
+        
+                // Apply threshold
+                const threshold = 128; // Adjust this value as needed
+                for (let i = 0; i < data.length; i += 4) {
+                    const gray = data[i];
+                    const color = gray >= threshold ? 255 : 0; // 1-bit color
+                    data[i] = color; // Red
+                    data[i + 1] = color; // Green
+                    data[i + 2] = color; // Blue
+                    data[i + 3] = 255; // Alpha
+                }
+        
+                // Invert colors if checkbox is checked
+                if (invertColors) {
+                    for (let i = 0; i < data.length; i += 4) {
+                        data[i] = 255 - data[i]; // Red
+                        data[i + 1] = 255 - data[i + 1]; // Green
+                        data[i + 2] = 255 - data[i + 2]; // Blue
+                    }
+                }
+        
+                ctx.putImageData(imageData, 0, 0);
+        
+                // Convert canvas to Blob and trigger download
+                canvas.toBlob(function(blob) {
+                    const downloadLink = document.getElementById('downloadButton');
+                    const originalFileName = file.name.split('.').slice(0, -1).join('.');
+                    const newFileName = `${originalFileName}-1bit.jpg`; // Update extension to .jpg
+        
+                    // Create a download URL for the Blob and trigger the download
+                    downloadLink.href = URL.createObjectURL(blob);
+                    downloadLink.download = newFileName;
+                    downloadLink.style.display = 'block';
+                    downloadLink.textContent = 'Download 1-Bit Image';
+                }, 'image/jpeg');
+            };
+        
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+        
+    </script>
+</body>
+</html>
