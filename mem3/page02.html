@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Roboto+Condensed:wght@100&display=swap" rel="stylesheet"> 
+    <style>
+        *{
+            margin: 0px;
+            padding: 0px;
+            user-select: none; 
+        }
+  
+        body{
+            background-color: rgb(0, 0, 0);
+        }
+     
+        button{
+            font-size: small;
+            color: rgb(208, 208, 208);
+            border-radius: 2px;
+            height:40px;
+            width:110px;
+            border: 1px solid rgb(43, 43, 43);
+            background-color: rgb(59, 59, 59);
+            transition: background-color 0.3s ease; 
+            user-select: none;  
+            
+        }
+          
+        .btngrp{
+            margin-top: 5px;
+            margin-left: 5px;
+            
+        }
+        
+        .right-container {
+            float: right; 
+            width: 39%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column; 
+            overflow-y: scroll; 
+            scrollbar-width: none; 
+        }
+       
+        .sec3 {
+            position: fixed;
+            background-color: rgb(43, 43, 43);
+            color: rgb(183, 183, 183);
+            bottom:0px;
+            margin-bottom: 0px;
+            height: 0px;
+            border-radius: 2px;
+            border: 0px solid rgb(0, 0, 0);
+            
+        }
+        .sec3.expanded {
+            margin-bottom: 50px;
+            right:10px;
+            bottom:20px;
+            z-index:5;
+            height: 170px;
+            width: 120px;
+        }
+        
+        .hidebar {        
+            right:10px;
+            bottom:10px;
+            font-size:0px; 
+            color: gray;
+            height: 50px;
+            width: 50px;
+            border-radius: 100px;
+            z-index: 10;
+            position:fixed;         
+            transition: background-color 0.2s ease; 
+            display: inline-block;
+            background:linear-gradient(#9a9a9a 0 0),linear-gradient(#9a9a9a 0 0), rgb(71, 71, 71);
+            background-position:center;
+            background-size: 39% 2.5px,2.5px 39%; 
+            background-repeat:no-repeat;
+
+        }
+    
+        .sec2{         
+            float: right;
+            height:100vh;
+            z-index: 1;
+            background-color: rgb(34, 34, 34);
+            color: rgb(201, 201, 201);
+            overflow-y: scroll;
+            scrollbar-width: none; 
+            
+        }
+        .temp{
+            float: right;
+            width: 39%;
+            height:1vh;
+            z-index: 2;
+            background-color: rgb(34, 34, 34);
+        }
+
+        .sec1{
+            position: fixed;
+            float: right;
+            width: 61%;
+            height:100vh;
+            background-color: rgb(0, 0, 0);
+            z-index: 1;
+       
+        }
+
+        .mobile .right-container {
+            width: 140px;
+        }
+        .mobile .sec1 {
+            width: calc(100% - 140px);
+        }
+        .mobile .sec3 {
+            background-color: rgb(43, 43, 43);
+        }
+        .mobile .gallery img {
+            max-width:110px;
+            max-height:110px;
+        }     
+        .mobile button.touch-active{
+            background-color: rgb(123, 123, 123);
+        }       
+        .pc button:hover{
+            background-color: rgb(123, 123, 123);
+        }   
+        .mobile .hidebar.touch-active{
+            background-color: rgb(124, 124, 124);
+        }
+        .pc .hidebar:hover{
+            background-color: rgb(124, 124, 124);
+        }
+
+        .resizer {
+            margin-left: 0px;
+            position: fixed;
+            top: 0vh;
+            height: 100vh;
+            width: 21px;
+            border-radius: 0px;
+            background-color: rgb(34, 34, 34,0.5);
+            z-index: 20;
+      
+            transition: background-color 0.2s ease;
+          }
+          .resizer:hover, .resizer.active {
+            background-color: rgba(106, 106, 106, 0); 
+        }
+        .smallbar {
+            margin-left: 5.5px;
+            position: fixed;
+            top: 43vh;
+            height: 100px;
+            width: 10px;
+            border-radius: 1.5px;
+            background-color: rgba(144, 144, 144, 0.5);
+            z-index: 10;        
+          }
+        .longbar {
+            position: fixed;
+            top: 0vh;
+            height: 100vh;
+            width: 20px;
+            border-radius: 0px;
+            background-color: rgb(34, 34, 34,1);
+            z-index: 5;
+          }
+     
+
+        .heading{
+            font-family: "Rajdhani", sans-serif;
+            font-size: 1.4em;
+            text-align: center;
+            color: rgb(255, 255, 255);     
+        }
+ 
+        .gallery {
+            margin-top: 1vh;
+            margin-left: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            
+        }
+        @media (max-width: 768px) {
+            .gallery {
+                grid-template-columns: repeat(2, 1fr); 
+            }
+        }
+        @media (max-width: 480px) {
+            .gallery {
+                grid-template-columns: repeat(1, 1fr);
+            }
+        }
+      
+        .gallery img {
+            width:135px;
+            height:135px;
+            object-fit: cover;
+            border-radius: 2.5px;        
+            margin: 3px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.274);
+            
+        } 
+
+            .gallery img{  
+            transition: transform 0.1s ease;
+            }
+        
+            .gallery img:hover {
+            transform: scale(0.97); 
+            }
+     
+        .modal-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100vh;         
+        }
+        .modal img {
+            object-fit: scale-down;
+        }
+
+        .filedata,.progress,.loading{
+            margin-left: 22px;
+        }     
+    </style>
+</head>
+<body>
+
+    <div class="sec1">       
+        <div id="myModal" class="modal">
+            <img class="modal-content" id="modalImg">
+        </div>    
+    </div>
+
+    <div class="right-container">
+        <div class="sec2">
+                <div class="filedata" style="display:none"></div>
+                <div class="progress"></div>           
+                <div class="gallery" id="imageGallery"></div>
+                <div class="resizer"></div>
+                <div class="smallbar"></div>
+                <div class="longbar"></div>               
+                <div class="temp"></div> 
+        </div>
+
+        <div id="hidebar" class="hidebar">
+            <p>▵</p>
+         </div>
+
+        <div class="sec3">           
+            <div class="btngrp">          
+                <input type="file" class="inp" style="display:none" multiple onchange="getImageData(event)">
+                <button class="b1" onclick="selectImage()">Select Images</button>
+                <button class="b2" onclick="uploadImages()">Upload Images</button>
+                <button class="b3" onclick="cancelSelection()">Clear</button>
+                <button class="b4" onclick="deleteSelectedImage()">Delete</button>
+            </div>           
+        </div>
+    </div>
+
+<script src="page02.js"></script>
+
+</body>
+</html>
