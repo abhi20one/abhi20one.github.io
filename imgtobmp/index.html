@@ -7,6 +7,13 @@
     <style>
         body {
             background-color: rgb(205, 255, 224);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+
+            flex-direction: column;
+
         }
         .canvas-container {
             margin-bottom: 20px;
@@ -16,14 +23,15 @@
 <body>
     <h1>Image Resizer</h1>
     <input type="file" id="imageInput" accept="image/*" multiple>
-    <br><br>
-
-    <input type="checkbox" id="maintainAspectRatio" checked>
-    <label for="maintainAspectRatio">Maintain Aspect Ratio</label>
     <br>
-    <input type="checkbox" id="invertColors">
-    <label for="invertColors">Invert Colors</label>
-    <br>
+    <div>
+        <input type="checkbox" id="maintainAspectRatio" checked>
+        <label for="maintainAspectRatio">Maintain Aspect Ratio</label>
+    </div>
+    <div>
+        <input type="checkbox" id="invertColors">
+        <label for="invertColors">Invert Colors</label>
+    </div>
     <br>
     <label for="bgColor">Background Color:</label>
     <select id="bgColor">
@@ -31,12 +39,10 @@
         <option value="white">White</option>
     </select>
     <br>
-
-    <br>
     <button id="convertButton">Resize Images</button>
     <br><br>
     <div id="canvasContainer"></div>
-    <br><br>
+    <br>
 
     <script>
         document.getElementById('convertButton').addEventListener('click', function () {
