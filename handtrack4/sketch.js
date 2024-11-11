@@ -7,14 +7,14 @@ let carModel;
 let carTexture;
 let carX = window.innerWidth / 2;
 let carY = window.innerHeight / 2;
-let carSize = 300;
+let carSize = 100;
 let carVelocityX = 0;
 let carVelocityY = 0;
 let damping = 0.95;  // Adjust this for momentum effect
 
 let previousPinchDistance = 0;
 let pinchThreshold = 0.08;
-let sizeChangeRate = 50;
+let sizeChangeRate = 60;
 
 let targetCarSize = carSize;
 let targetX = carX;
@@ -44,8 +44,8 @@ function draw() {
   carY = lerp(carY, targetY, 0.1);
 
   // Apply damping to momentum effect
-  carVelocityX *= damping;
-  carVelocityY *= damping;
+  // carVelocityX *= damping;
+  // carVelocityY *= damping;
 
   // Scale size smoothly
   carSize = lerp(carSize, targetCarSize, 0.1);
@@ -60,29 +60,68 @@ function draw() {
   rotateY(currentRotateY);
    
 
-
     // console.log(currentRotateX);
     // console.log(currentRotateY);
 
-  
 
 
   texture(carTexture);
   model(carModel);
 
   // Update positions with current velocities
-  carX += carVelocityX;
-  carY += carVelocityY;
+  // carX += carVelocityX;
+  // carY += carVelocityY;
+
+    // Move car towards target position
+    carX = lerp(carX, targetX, 0.1);
+    carY = lerp(carY, targetY, 0.1);
 }
 
+
+
+let movThreshold = 0.01;
+let movPos = 0.02;
+let p = 0.5;
+let q = 0.5;
+let previousP = 0.5;
+let previousQ = 0.5;
 function updateCarPosition(x, y) {
-  targetX = x * window.innerWidth;
-  targetY = y * window.innerHeight;
+
+  if (x > previousA + movThreshold) {
+    p += movPos;
+  } else if (x < previousA - movThreshold) {
+    p -= movPos;
+  }
+
+  if (y > previousB + movThreshold) {
+    q += movPos;
+  } else if (y < previousB - movThreshold) {
+    q -= movPos;
+  }
+
+  targetX = p * window.innerWidth;
+  targetY = q * window.innerHeight;
+  
+  // targetX = x * window.innerWidth;
+  // targetY = y * window.innerHeight;
+
+
+  // console.log(targetX);
+  console.log("X",x);
+  console.log("targetX",targetX);
+
+  // console.log("Y",carVelocityY);
+
 
   // Set velocities towards target position for momentum effect
-  carVelocityX = (targetX - carX) * 0.1;
-  carVelocityY = (targetY - carY) * 0.1;
+  // carVelocityX = (targetX - carX) * 0.1;
+  // carVelocityY = (targetY - carY) * 0.1;
+
+  previousA = x;
+  previousB = y;
 }
+
+
 
 function pinchZoomScale(pinchDistance) {
   if (previousPinchDistance !== 0) {
@@ -94,7 +133,7 @@ function pinchZoomScale(pinchDistance) {
   }
 
   // Constrain size
-  targetCarSize = constrain(targetCarSize, 100, 700);
+  targetCarSize = constrain(targetCarSize, 100, 1000);
   previousPinchDistance = pinchDistance;
 }
 
