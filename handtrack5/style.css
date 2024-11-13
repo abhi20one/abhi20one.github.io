@@ -1,0 +1,115 @@
+body  {
+ overflow: hidden;
+ background-color: #000000;
+}
+
+
+
+.video-section {
+    left: 100px;
+    background-color: #000;
+}
+
+.video-section video {
+
+ display:none;
+ 
+}
+
+.ui-section {
+    top: 0;
+    right: 0vh;
+    position: absolute;
+    width: 90vh;
+    height: 100vh;
+    background-color: #ffffff3d;
+    transition: right 0.5s ease-in-out;
+}
+
+.ui-gallery {
+    margin-top:30px;
+    margin-left:20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Create two columns */
+    gap: 60px;  
+    padding: 60px;
+    overflow-y: auto;
+}
+
+.grid-item {
+    display: flex;
+    flex-direction: column; /* Align image and text vertically */
+    align-items: center; /* Center the content */
+    text-align: center; /* Center the text below the image */
+}
+
+.grid-item img {
+    max-width: 100%; /* Ensure images are responsive */
+    height: auto;
+}
+
+.grid-item p {
+    color: rgb(226, 226, 226);
+    margin-top: px; /* Space between the image and the text */
+    font-size: 14px; /* Optional, adjust text size */
+}
+
+
+
+.ui-section.hidden {
+    right: -90vh;
+    
+}
+
+.mobile .ui-section {
+    right: -30vh;
+    
+}
+
+.mobile .ui-section.hidden {
+    right: -130vh;
+    
+}
+
+.mobile .ui-gallery {
+    margin-top:0px;
+    margin-left:0px;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr); /* Create two columns */
+    gap: 0px;  
+    padding: 0px;
+    overflow-y: auto;
+}
+
+
+.mobile .ui-toggle {
+    
+
+    font-size: 50px;
+    width:500px;
+    height:120px;
+
+ 
+ 
+}
+
+
+
+
+.ui-toggle {
+    
+    color: white;
+    
+    top: 10px;
+    right: 10px;
+    position: absolute;
+ 
+    z-index:10;
+
+    width:90px;
+    height:58px;
+
+    background-color: #ffffff3b;
+ 
+}
+

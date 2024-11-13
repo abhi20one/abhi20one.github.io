@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/addons/p5.sound.js"></script>
+  
+  <!-- Load sketch.js first -->
+  <script defer src="sketch.js"></script>
+  <!-- Then load detection.js -->
+  <script defer src="detection.js"></script>
+  
+  <link rel="stylesheet" href="style.css" class="style">
+</head>
+
+<body>
+  <div class="container">
+    <!-- Left side: Video -->
+    <div class="video-section">
+      <video id="video"></video>
+    </div>
+    
+    <!-- Right side: UI -->
+    <div class="ui-section" id="uiSection">
+      
+      <div class="ui-gallery">
+        <div class="grid-item">
+          <img src="move.gif" alt="this slowpoke moves" width="200" />
+          <p>Move</p>
+        </div>
+        <div class="grid-item">
+          <img src="rotate.gif" alt="this slowpoke moves" width="200" />
+          <p>Rotate</p>
+        </div>
+
+        <div class="grid-item">
+          <img src="zoomout.gif" alt="this slowpoke moves" width="200" />
+          <p>zoom out</p>
+        </div>
+        <div class="grid-item">
+          <img src="zoomin.gif" alt="this slowpoke moves" width="200" />
+          <p>Zoom in</p>
+        </div>
+
+      </div>
+
+    </div>
+  
+
+
+    <div class="ui-toggle" onclick="toggleUI()">open palm to toggle gesture menu</div>
+
+  </div>
+
+
+  <script>
+    function toggleUI() {
+      const uiSection = document.getElementById('uiSection');
+      uiSection.classList.toggle('hidden');
+
+    function isMobileDevice() {
+        return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+    }
+    if (isMobileDevice()) {
+        document.body.classList.add('mobile');
+    }   else {
+        document.body.classList.add('pc');
+    }
+  }
+
+  </script>
+
+
+</body>
+
+</html>
