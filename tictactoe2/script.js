@@ -29,6 +29,8 @@ function initializeGame() {
     cells.forEach(cell => cell.addEventListener("click", cellClicked));
     // Listen for click anywhere on the screen to restart the game
     document.addEventListener("click", restartGameOnClick);
+    // Listen for click to toggle fullscreen
+    document.addEventListener("dblclick", toggleFullscreen);  // Using double-click for fullscreen toggle
     running = true;
 }
 
@@ -115,14 +117,14 @@ function checkWinner() {
         setTimeout(() => {
             // statusText.textContent = `${currentPlayer} wins!`;
             running = false;
-        }, 100);  // 1000 milliseconds = 1 second
+        }, 100);  // 100 milliseconds = 1 second
     }
 
     else if (!options.includes("")) {
         setTimeout(() => {
             // statusText.textContent = `Draw!`;
             running = false;
-        }, 100);  // 1000 milliseconds = 1 second
+        }, 100);  // 100 milliseconds = 1 second
     } else {
         changePlayer();
     }
@@ -152,10 +154,37 @@ function restartGame() {
 
 function restartGameOnClick(event) {
     // Only restart if the game has ended and the click is outside the cells
-    if (!running) {
-        const target = event.target;
-         
-            restartGame(); // Restart the game when clicking anywhere outside the cells
-  
+    const target = event.target;
+
+    // Restart the game when clicking anywhere outside the cells
+    if (!running && !target.classList.contains("cell")) {
+        restartGame();
+    }
+}
+
+// Function to toggle fullscreen mode on double-click
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        // Enter fullscreen
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) { // Firefox
+            document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari and Opera
+            document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+            document.documentElement.msRequestFullscreen();
+        }
+    } else {
+        // Exit fullscreen
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) { // Firefox
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) { // Chrome, Safari and Opera
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { // IE/Edge
+            document.msExitFullscreen();
+        }
     }
 }
