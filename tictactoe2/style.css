@@ -1,0 +1,43 @@
+body{
+    background-color: rgb(0, 0, 0);
+    color: rgb(149, 149, 149);
+}
+
+.cell{
+    display: flex;
+    justify-content: center; /* Centers the text horizontally */
+    align-items: center; 
+    width: 100px;
+    height: 100px;
+    border: 2px solid;
+    box-shadow: 0 0 0 2px;
+ 
+    font-size: 50px;
+
+    user-select: none;    
+    /* cursor: pointer; */
+}
+
+#gameContainer{
+    position: relative;
+    top: 190px;
+    font-family: "Permanent Marker", cursive;
+    text-align: center;
+}
+/* Media query for mobile devices */
+@media (max-width: 768px) { /* You can adjust the max-width value as needed */
+    #gameContainer {
+        top: 265px;
+    }
+}
+
+#cellContainer{
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    width: 300px;
+    margin: auto;
+}
+
+.cell p.dimmed {
+    opacity: 0.5;
+}
