@@ -27,7 +27,7 @@ body{
 /* Media query for mobile devices */
 @media (max-width: 768px) { /* You can adjust the max-width value as needed */
     #gameContainer {
-        top: 265px;
+        top: 280px;
     }
 }
 
