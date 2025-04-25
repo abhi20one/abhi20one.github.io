@@ -21,7 +21,7 @@ body{
 #gameContainer{
     position: relative;
     top: 190px;
-    font-family: "Permanent Marker", cursive;
+    font-family: "Permanent Marker";
     text-align: center;
 }
 /* Media query for mobile devices */
