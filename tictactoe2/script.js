@@ -157,9 +157,8 @@ function restartGameOnClick(event) {
     const target = event.target;
 
     // Restart the game when clicking anywhere outside the cells
-    if (!running && !target.classList.contains("cell")) {
-        restartGame();
-    }
+    restartGame();
+ 
 }
 
 // Function to toggle fullscreen mode on double-click
