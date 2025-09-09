@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write   # 👈 allow Actions to push commits
+
 jobs:
   build:
     runs-on: ubuntu-latest
