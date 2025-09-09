@@ -1,0 +1,31 @@
+name: Generate projects.json
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Generate projects.json
+        run: |
+          echo "[" > projects.json
+          find . -mindepth 1 -maxdepth 1 -type d \
+            ! -name ".github" \
+            ! -name "node_modules" \
+            -printf '"%f",\n' \
+            | sed '$ s/,$//' >> projects.json
+          echo "]" >> projects.json
+
+      - name: Commit and push projects.json
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add projects.json
+          git commit -m "Update projects.json" || echo "No changes"
+          git push
