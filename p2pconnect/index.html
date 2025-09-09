@@ -4,11 +4,12 @@
   <meta charset="utf-8" />
   <title>WebRTC P2P Chat</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    textarea { width: 100%; height: 120px; margin: 5px 0; padding: 5px; }
-    input { width: 80%; padding: 5px; }
-    button { padding: 8px 12px; margin: 5px; }
+    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    textarea { width: 100%; height: 120px; margin: 5px 0; padding: 5px; resize: none; }
+    input { width: calc(100% - 90px); padding: 5px; }
+    button { padding: 8px 12px; margin: 5px; cursor: pointer; border-radius: 6px; }
     #messages { height: 150px; }
+    .row { display: flex; align-items: center; gap: 10px; }
   </style>
 </head>
 <body>
@@ -17,16 +18,24 @@
   <button onclick="createOffer()">Create Offer</button>
   <button onclick="acceptRemote()">Accept Remote</button>
 
-  <h3>Local Description (copy this)</h3>
-  <textarea id="localDesc" readonly></textarea>
+  <h3>Local Description</h3>
+  <div class="row">
+    <textarea id="localDesc" readonly></textarea>
+    <button onclick="copyLocal()">📋 Copy</button>
+  </div>
 
-  <h3>Remote Description (paste here)</h3>
-  <textarea id="remoteDesc"></textarea>
+  <h3>Remote Description</h3>
+  <div class="row">
+    <textarea id="remoteDesc"></textarea>
+    <button onclick="pasteRemote()">📥 Paste</button>
+  </div>
 
   <h3>Chat</h3>
   <textarea id="messages" readonly></textarea><br>
-  <input id="input" placeholder="Type a message" />
-  <button onclick="sendMessage()">Send</button>
+  <div class="row">
+    <input id="input" placeholder="Type a message" />
+    <button onclick="sendMessage()">Send</button>
+  </div>
 
   <script>
     let pc = new RTCPeerConnection({
@@ -46,7 +55,7 @@
       };
     };
 
-    // add ICE candidates into the local description automatically
+    // wait for ICE candidates
     async function waitForICE() {
       await new Promise((resolve) => {
         if (pc.iceGatheringState === "complete") {
@@ -92,6 +101,25 @@
         channel.send(input.value);
         messages.value += "Me: " + input.value + "\n";
         input.value = "";
+      }
+    }
+
+    // Clipboard helpers
+    async function copyLocal() {
+      try {
+        await navigator.clipboard.writeText(localDesc.value);
+        alert("Local Description copied!");
+      } catch (err) {
+        alert("Failed to copy: " + err);
+      }
+    }
+
+    async function pasteRemote() {
+      try {
+        remoteDesc.value = await navigator.clipboard.readText();
+        alert("Remote Description pasted!");
+      } catch (err) {
+        alert("Failed to paste: " + err);
       }
     }
   </script>
